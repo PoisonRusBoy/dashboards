@@ -1,0 +1,805 @@
+<title>Откуда берутся разнорабочие</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+
+<style>
+:root {
+  --ground: #F0F0EC;
+  --surface: #FAFAF7;
+  --surface-2: #E7E7E1;
+  --line: #D2D2C9;
+  --line-strong: #B4B4A8;
+  --ink: #1B1D1A;
+  --ink-2: #4E524A;
+  --ink-3: #74786E;
+  --accent: #C25A16;
+  --accent-soft: rgba(194, 90, 22, 0.14);
+  --steel: #2C5A6B;
+  --steel-soft: rgba(44, 90, 107, 0.13);
+  --good: #3D6B48;
+  --warn: #9A6A0B;
+  --bad: #A02B1E;
+  --bar-track: #DEDED6;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground: #15171A;
+    --surface: #1D2024;
+    --surface-2: #24282C;
+    --line: #33373C;
+    --line-strong: #4A4F55;
+    --ink: #E9E7E1;
+    --ink-2: #B3B2AB;
+    --ink-3: #8A8A83;
+    --accent: #E8863E;
+    --accent-soft: rgba(232, 134, 62, 0.16);
+    --steel: #74A9BD;
+    --steel-soft: rgba(116, 169, 189, 0.15);
+    --good: #6FA37A;
+    --warn: #C79A3C;
+    --bad: #D2695A;
+    --bar-track: #2C3035;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground: #15171A;
+  --surface: #1D2024;
+  --surface-2: #24282C;
+  --line: #33373C;
+  --line-strong: #4A4F55;
+  --ink: #E9E7E1;
+  --ink-2: #B3B2AB;
+  --ink-3: #8A8A83;
+  --accent: #E8863E;
+  --accent-soft: rgba(232, 134, 62, 0.16);
+  --steel: #74A9BD;
+  --steel-soft: rgba(116, 169, 189, 0.15);
+  --good: #6FA37A;
+  --warn: #C79A3C;
+  --bad: #D2695A;
+  --bar-track: #2C3035;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: "Source Serif 4", Georgia, "Times New Roman", serif;
+  font-size: 17px;
+  line-height: 1.62;
+  margin: 0;
+  padding: 0 20px 96px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap { max-width: 940px; margin: 0 auto; }
+
+h1, h2, h3, .eyebrow, .label, th, .pill, .num, .barlabel {
+  font-family: Archivo, "Helvetica Neue", Arial, sans-serif;
+}
+
+.mono, .val, td.n, .scale-n, .funnel-n, .q-n {
+  font-family: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- header ---------- */
+
+header {
+  padding: 72px 0 40px;
+  border-bottom: 3px solid var(--ink);
+}
+
+.kicker {
+  font-family: Archivo, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 18px;
+}
+
+h1 {
+  font-size: clamp(38px, 6.5vw, 64px);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  margin: 0 0 20px;
+}
+
+.standfirst {
+  font-size: 19px;
+  color: var(--ink-2);
+  max-width: 62ch;
+  margin: 0 0 28px;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 28px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 12.5px;
+  color: var(--ink-3);
+  letter-spacing: 0.02em;
+}
+
+.meta b { color: var(--ink-2); font-weight: 500; }
+
+/* ---------- sections ---------- */
+
+section { padding: 52px 0 8px; border-bottom: 1px solid var(--line); }
+section:last-of-type { border-bottom: 0; }
+
+.head { display: flex; gap: 18px; align-items: baseline; margin-bottom: 10px; }
+
+.num {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--accent);
+  padding-top: 8px;
+  letter-spacing: 0.06em;
+}
+
+h2 {
+  font-size: clamp(24px, 3.4vw, 32px);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.14;
+  text-wrap: balance;
+  margin: 0;
+}
+
+.lede { color: var(--ink-2); max-width: 68ch; margin: 0 0 30px 0; }
+p { max-width: 68ch; }
+
+/* ---------- supply groups ---------- */
+
+.groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(258px, 1fr)); gap: 14px; margin-bottom: 26px; }
+
+.g {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--good);
+  padding: 18px 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.g.closed {
+  border-top-color: var(--line-strong);
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--surface-2) 0 8px,
+    var(--surface) 8px 16px
+  );
+}
+
+.g h3 { font-size: 16px; font-weight: 600; margin: 0; line-height: 1.28; letter-spacing: -0.005em; }
+
+.g .status {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--good);
+}
+.g.closed .status { color: var(--ink-3); }
+
+.g p { font-size: 14.5px; line-height: 1.5; color: var(--ink-2); margin: 0; max-width: none; }
+
+/* ---------- channel table ---------- */
+
+.scroll { overflow-x: auto; margin-bottom: 24px; }
+
+table { border-collapse: collapse; width: 100%; min-width: 720px; font-size: 15px; }
+
+thead th {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  text-align: left;
+  padding: 0 12px 12px 0;
+  border-bottom: 2px solid var(--ink);
+  vertical-align: bottom;
+}
+
+tbody td { padding: 13px 12px 13px 0; border-bottom: 1px solid var(--line); vertical-align: middle; }
+
+tbody tr.dim td { color: var(--ink-3); }
+
+td.name { font-family: Archivo, sans-serif; font-weight: 600; font-size: 15px; white-space: nowrap; }
+td.note { font-size: 14px; color: var(--ink-2); }
+
+.scale { display: flex; align-items: center; gap: 8px; }
+.dots { display: flex; gap: 3px; }
+.dot { width: 9px; height: 16px; background: var(--bar-track); border-radius: 1px; }
+.dot.on { background: var(--steel); }
+tr.hero .dot.on { background: var(--accent); }
+.scale-n { font-size: 11px; color: var(--ink-3); }
+
+.pill {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 3px 9px;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+.pill.yes { background: var(--accent-soft); color: var(--accent); }
+.pill.maybe { background: var(--steel-soft); color: var(--steel); }
+.pill.no { background: var(--surface-2); color: var(--ink-3); }
+
+/* ---------- funnel ---------- */
+
+.funnel { display: flex; flex-direction: column; gap: 3px; margin-bottom: 26px; }
+
+.fr { display: grid; grid-template-columns: 210px 1fr; gap: 18px; align-items: center; }
+
+.fr .barlabel { font-size: 13.5px; font-weight: 500; text-align: right; letter-spacing: -0.005em; }
+
+.ftrack { display: flex; align-items: center; gap: 12px; }
+
+.fbar {
+  height: 34px;
+  background: var(--steel);
+  display: flex;
+  align-items: center;
+  padding-left: 10px;
+  min-width: 42px;
+}
+.fr:first-child .fbar { background: var(--ink-2); }
+.fr.last .fbar { background: var(--accent); }
+
+.funnel-n { font-size: 13px; font-weight: 600; color: var(--surface); }
+
+.floss { font-size: 13.5px; color: var(--ink-3); line-height: 1.4; }
+
+/* ---------- retention ---------- */
+
+.rank { display: flex; flex-direction: column; gap: 0; margin-bottom: 24px; }
+
+.rk {
+  display: grid;
+  grid-template-columns: 34px 1fr auto;
+  gap: 16px;
+  align-items: baseline;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--line);
+}
+.rk:first-child { border-top: 1px solid var(--line); }
+
+.rk .q-n { font-size: 13px; color: var(--ink-3); }
+.rk h3 { font-family: Archivo, sans-serif; font-size: 16px; font-weight: 600; margin: 0 0 4px; }
+.rk p { font-size: 14.5px; color: var(--ink-2); margin: 0; max-width: 62ch; }
+
+.tag {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  white-space: nowrap;
+}
+.tag.weak { background: var(--bad); color: #FFF6F4; }
+.tag.ok { background: var(--surface-2); color: var(--ink-3); }
+
+/* ---------- economics ---------- */
+
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; margin-bottom: 30px; }
+
+.stat { background: var(--surface); border: 1px solid var(--line); padding: 18px; }
+.stat .label { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-3); display: block; margin-bottom: 10px; }
+.stat .val { font-size: 30px; font-weight: 600; letter-spacing: -0.02em; display: block; line-height: 1; }
+.stat .val.warn { color: var(--bad); }
+.stat .val.good { color: var(--good); }
+.stat .sub { font-size: 13px; color: var(--ink-2); display: block; margin-top: 9px; line-height: 1.4; }
+
+.shifts { display: flex; flex-direction: column; gap: 8px; margin-bottom: 22px; }
+.sh { display: grid; grid-template-columns: 130px 1fr; gap: 16px; align-items: center; }
+.sh .barlabel { font-size: 13.5px; text-align: right; color: var(--ink-2); }
+.shtrack { background: var(--bar-track); height: 26px; position: relative; }
+.shfill { height: 100%; background: var(--bad); display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; }
+.shfill.low { background: var(--good); }
+.shfill .funnel-n { color: #FFFFFF; font-size: 12px; }
+
+/* ---------- two columns ---------- */
+
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid var(--line); margin-bottom: 24px; }
+.col { padding: 20px; }
+.col.left { background: var(--surface); border-right: 1px solid var(--line); }
+.col.right { background: var(--surface-2); }
+.col h3 { font-size: 13px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; margin: 0 0 16px; }
+.col.left h3 { color: var(--good); }
+.col.right h3 { color: var(--bad); }
+.col ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.col li { font-size: 14.5px; line-height: 1.45; padding-left: 16px; position: relative; color: var(--ink-2); }
+.col li::before { content: ""; position: absolute; left: 0; top: 9px; width: 6px; height: 6px; background: currentColor; opacity: 0.5; }
+.col li b { color: var(--ink); font-weight: 600; }
+
+/* ---------- questions ---------- */
+
+.qs { display: flex; flex-direction: column; gap: 0; }
+.q { display: grid; grid-template-columns: 34px 1fr; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+.q:first-child { border-top: 1px solid var(--line); }
+.q .q-n { font-size: 13px; color: var(--accent); padding-top: 2px; }
+.q .qt { font-family: Archivo, sans-serif; font-size: 16px; font-weight: 600; margin: 0 0 5px; line-height: 1.35; }
+.q .flag { font-size: 14px; color: var(--ink-2); margin: 0; max-width: 66ch; }
+.q .flag b { font-family: "IBM Plex Mono", monospace; font-size: 11.5px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--bad); font-weight: 500; }
+
+/* ---------- takeaways ---------- */
+
+.takes { display: flex; flex-direction: column; gap: 20px; }
+.take { border-left: 3px solid var(--accent); padding: 4px 0 4px 20px; }
+.take h3 { font-size: 18px; font-weight: 700; margin: 0 0 7px; letter-spacing: -0.01em; }
+.take p { font-size: 15.5px; color: var(--ink-2); margin: 0; }
+
+.callout {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--steel);
+  padding: 16px 18px;
+  font-size: 14.5px;
+  color: var(--ink-2);
+  margin: 4px 0 0;
+  max-width: none;
+}
+.callout b { color: var(--ink); font-weight: 600; }
+
+footer {
+  padding-top: 40px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 12px;
+  color: var(--ink-3);
+  line-height: 1.7;
+}
+
+@media (max-width: 700px) {
+  body { font-size: 16px; }
+  .fr { grid-template-columns: 1fr; gap: 6px; }
+  .fr .barlabel { text-align: left; }
+  .split { grid-template-columns: 1fr; }
+  .col.left { border-right: 0; border-bottom: 1px solid var(--line); }
+  .sh { grid-template-columns: 1fr; gap: 4px; }
+  .sh .barlabel { text-align: left; }
+  .rk { grid-template-columns: 26px 1fr; }
+  .rk .tag { grid-column: 2; justify-self: start; }
+}
+</style>
+
+<div class="wrap">
+
+<header>
+  <p class="kicker">Трек линейного персонала · внутренний разбор</p>
+  <h1>Откуда берутся разнорабочие</h1>
+  <p class="standfirst">Как устроена сторона предложения: кто откликается, какими каналами их находят, сколько стоит вывести одного человека на объект и в каком месте наши обещания заказчику упираются в механику.</p>
+  <div class="meta">
+    <span><b>29 августа 2026</b></span>
+    <span>Краснодар и Ростов</span>
+    <span>Подбор остаётся зоной партнёра</span>
+    <span>Источник: <b>sourcing_analysis.md</b></span>
+  </div>
+</header>
+
+<section>
+  <div class="head"><span class="num">01</span><h2>Модель сама отрезает половину рынка</h2></div>
+  <p class="lede">Канал определяется не словом «разнорабочий», а тем, кто именно откликается. Групп шесть, и наши условия (безнал, самозанятость, дневная смена, без проживания и доставки) оставляют доступными три.</p>
+
+  <div class="groups">
+    <div class="g">
+      <span class="status">доступен</span>
+      <h3>Местный без квалификации</h3>
+      <p>Живёт в городе или пригороде. Держится близостью объекта и регулярностью смен. Основа устойчивой базы: набирается медленно, работает долго.</p>
+    </div>
+    <div class="g">
+      <span class="status">доступен</span>
+      <h3>Подработка на 1-3 смены</h3>
+      <p>Студенты, вторая работа, промежуток между работами. Держится оплатой в тот же день. Закрывает пик, на постоянный объект не годится.</p>
+    </div>
+    <div class="g">
+      <span class="status">доступен</span>
+      <h3>Готовая бригада с бригадиром</h3>
+      <p>Отношения у людей с бригадиром, а не с нанимателем. Самый быстрый способ закрыть заявку и самый быстрый способ потерять и людей, и клиента.</p>
+    </div>
+    <div class="g closed">
+      <span class="status">закрыт: нет проживания</span>
+      <h3>Внутренний мигрант из СКФО и соседних регионов</h3>
+      <p>Приходит через землячество и бригадира, держится жильём и объёмом. У партнёра проживания нет, значит группа недоступна.</p>
+    </div>
+    <div class="g closed">
+      <span class="status">закрыт: не наша зона</span>
+      <h3>Иностранный гражданин из СНГ</h3>
+      <p>Значительная часть предложения на стройке. Правовая сторона закрыта на партнёре. Состав знать надо, углубляться не наша зона.</p>
+    </div>
+    <div class="g closed">
+      <span class="status">закрыт: только наличные</span>
+      <h3>Люди в трудной ситуации</h3>
+      <p>Стихийная биржа у рынков и расклейка. Наличные вечером. Источник самой дешёвой бригады и корень невыходов, с безналом не стыкуется.</p>
+    </div>
+  </div>
+
+  <p class="callout"><b>Что это значит.</b> Воронка предложения сужается ещё до того, как выбран канал. Три группы закрыты не выбором, а устройством модели.</p>
+</section>
+
+<section>
+  <div class="head"><span class="num">02</span><h2>Семь каналов, из них рабочих пять</h2></div>
+  <p class="lede">Оценка по пяти баллам, где больше значит лучше. Все оценки экспертные и подлежат проверке, кроме плотности выдачи Авито: она из нашей собственной разведки 21 августа.</p>
+
+  <div class="scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>Канал</th>
+          <th>Скорость</th>
+          <th>Дешевизна</th>
+          <th>Объём</th>
+          <th>Качество</th>
+          <th>Устойчивость</th>
+          <th>Нам</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="hero">
+          <td class="name">Авито Работа</td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot"></i></div></div></td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div></div></td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i></div></div></td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div></div></td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div></td>
+          <td><span class="pill yes">основной</span></td>
+        </tr>
+        <tr>
+          <td class="name">WhatsApp, своя группа</td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i></div></div></td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i></div></div></td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div></td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i></div></div></td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot"></i></div></div></td>
+          <td><span class="pill maybe">после базы</span></td>
+        </tr>
+        <tr>
+          <td class="name">Своя база</td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i></div></div></td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i></div></div></td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div></div></td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i></div></div></td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i></div></div></td>
+          <td><span class="pill yes">цель работы</span></td>
+        </tr>
+        <tr>
+          <td class="name">Сарафан</td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div></div></td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i></div></div></td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div></div></td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i></div></div></td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i></div></div></td>
+          <td><span class="pill maybe">растёт сам</span></td>
+        </tr>
+        <tr>
+          <td class="name">Бригадиры</td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i></div></div></td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div></td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot"></i></div></div></td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div></td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div></div></td>
+          <td><span class="pill maybe">с риском</span></td>
+        </tr>
+        <tr>
+          <td class="name">Телеграм, поиск</td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot"></i></div></div></td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot"></i></div></div></td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div></td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div></div></td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div></div></td>
+          <td><span class="pill maybe">дополняет</span></td>
+        </tr>
+        <tr class="dim">
+          <td class="name">hh.ru</td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div></div></td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div></div></td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div></div></td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div></td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div></td>
+          <td><span class="pill no">под бригадира</span></td>
+        </tr>
+        <tr class="dim">
+          <td class="name">Офлайн, биржа у рынков</td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i></div></div></td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot"></i></div></div></td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div></td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div></div></td>
+          <td><div class="scale"><div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div></div></td>
+          <td><span class="pill no">закрыт</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="callout"><b>Читается так.</b> Быстро и дёшево одновременно даёт только то, чего в начале нет: своя база и сарафан. Старт всегда идёт через дорогое и грязное, то есть Авито и бригадиров. Поэтому первый месяц любого поставщика персонала убыточен по привлечению, и поэтому реальный ресурс невозможно создать за неделю под нашу заявку.</p>
+</section>
+
+<section>
+  <div class="head"><span class="num">03</span><h2>Воронка от объявления до второй смены</h2></div>
+  <p class="lede">Типовое прохождение по Авито в крупном городе. Цифры оценочные: важны не значения, а места утечки.</p>
+
+  <div class="funnel">
+    <div class="fr">
+      <span class="barlabel">Откликнулись</span>
+      <div class="ftrack"><div class="fbar" style="width:100%"><span class="funnel-n">100</span></div></div>
+    </div>
+    <div class="fr">
+      <span class="barlabel">Дозвонились</span>
+      <div class="ftrack"><div class="fbar" style="width:40%"><span class="funnel-n">40</span></div><span class="floss">веерный отклик, трубку не берут</span></div>
+    </div>
+    <div class="fr">
+      <span class="barlabel">Подтвердили дату</span>
+      <div class="ftrack"><div class="fbar" style="width:20%"><span class="funnel-n">20</span></div><span class="floss">далеко ехать, нет оплаты в день</span></div>
+    </div>
+    <div class="fr">
+      <span class="barlabel">Пришли на первую смену</span>
+      <div class="ftrack"><div class="fbar" style="width:12%"><span class="funnel-n">12</span></div><span class="floss">невыход без предупреждения</span></div>
+    </div>
+    <div class="fr">
+      <span class="barlabel">Вышли на вторую</span>
+      <div class="ftrack"><div class="fbar" style="width:8%"><span class="funnel-n">8</span></div><span class="floss">тяжелее, чем ожидал</span></div>
+    </div>
+    <div class="fr last">
+      <span class="barlabel">Работают через две недели</span>
+      <div class="ftrack"><div class="fbar" style="width:5%"><span class="funnel-n">5</span></div><span class="floss">ушли туда, где ближе или платят чаще</span></div>
+    </div>
+  </div>
+
+  <p class="callout"><b>Где болит.</b> Самая дорогая потеря происходит после первой смены, когда деньги на привлечение уже потрачены целиком. Всё, что улучшает выход на вторую смену, дешевле любого нового объявления. И отдельно: наш перекомплект 12 на 10 закрывает невыход внутри работающей бригады, а не провал первого дня на новом объекте.</p>
+</section>
+
+<section>
+  <div class="head"><span class="num">04</span><h2>Что удерживает работника</h2></div>
+  <p class="lede">По значимости, а не по цене. Ставка стоит только третьей. По трём факторам из пяти мы слабее уличной бригады.</p>
+
+  <div class="rank">
+    <div class="rk">
+      <span class="q-n">01</span>
+      <div>
+        <h3>Скорость и предсказуемость выплаты</h3>
+        <p>Ежедневная оплата бьёт более высокую недельную ставку. «Оплата каждый день» в объявлениях конкурентов это не щедрость, а инструмент удержания.</p>
+      </div>
+      <span class="tag weak">мы слабее</span>
+    </div>
+    <div class="rk">
+      <span class="q-n">02</span>
+      <div>
+        <h3>Дорога</h3>
+        <p>Полтора часа с пересадкой убивают любую ставку. Район объекта в объявлении работает сильнее суммы.</p>
+      </div>
+      <span class="tag ok">зависит от объекта</span>
+    </div>
+    <div class="rk">
+      <span class="q-n">03</span>
+      <div>
+        <h3>Ставка</h3>
+        <p>Разница в 200-300 ₽ переманивает, но только когда первые два пункта равны.</p>
+      </div>
+      <span class="tag ok">в рынке</span>
+    </div>
+    <div class="rk">
+      <span class="q-n">04</span>
+      <div>
+        <h3>Старший на объекте</h3>
+        <p>Кто встретил, поставил задачу, не унизил. Один прораб способен разогнать бригаду за смену. У нас старший это человек заказчика.</p>
+      </div>
+      <span class="tag weak">вне контроля</span>
+    </div>
+    <div class="rk">
+      <span class="q-n">05</span>
+      <div>
+        <h3>Отсутствие вычетов и сюрпризов</h3>
+        <p>Обещали 3 200, выдали 3 200. Любое удержание пересказывается в чатах и закрывает канал.</p>
+      </div>
+      <span class="tag weak">безнал, не в день</span>
+    </div>
+  </div>
+
+  <p class="callout">Перебивается это только одним: регулярным объёмом смен. То есть тем, чего в начале нет.</p>
+</section>
+
+<section>
+  <div class="head"><span class="num">05</span><h2>Деньги: узкое место не там, где ждали</h2></div>
+  <p class="lede">Маржа считается по нашей же формуле для Краснодара: ставка заказчику минус 6 процентов налога, минус выплата работнику, минус 70 ₽ комиссии.</p>
+
+  <div class="stats">
+    <div class="stat">
+      <span class="label">Маржа на смену</span>
+      <span class="val good">690 ₽</span>
+      <span class="sub">при 4 000 заказчику и 3 000 работнику</span>
+    </div>
+    <div class="stat">
+      <span class="label">Она же при ставке 3 500</span>
+      <span class="val warn">190 ₽</span>
+      <span class="sub">ниже целевой наценки от 600 ₽</span>
+    </div>
+    <div class="stat">
+      <span class="label">Вывод одного человека</span>
+      <span class="val">400-700 ₽</span>
+      <span class="sub">оценка. Вилка партнёра 300-500 ₽ похожа на нижнюю границу без учёта его времени</span>
+    </div>
+    <div class="stat">
+      <span class="label">Критический показатель</span>
+      <span class="val">5 смен</span>
+      <span class="sub">столько человек должен отработать, чтобы привлечение не съедало маржу</span>
+    </div>
+  </div>
+
+  <p class="lede" style="margin-bottom:14px">Доля привлечения в марже, в зависимости от того, сколько смен человек отработал до ухода:</p>
+
+  <div class="shifts">
+    <div class="sh">
+      <span class="barlabel">1 смена</span>
+      <div class="shtrack"><div class="shfill" style="width:72%"><span class="funnel-n">72 %</span></div></div>
+    </div>
+    <div class="sh">
+      <span class="barlabel">2 смены</span>
+      <div class="shtrack"><div class="shfill" style="width:36%"><span class="funnel-n">36 %</span></div></div>
+    </div>
+    <div class="sh">
+      <span class="barlabel">3 смены</span>
+      <div class="shtrack"><div class="shfill" style="width:24%"><span class="funnel-n">24 %</span></div></div>
+    </div>
+    <div class="sh">
+      <span class="barlabel">5 смен</span>
+      <div class="shtrack"><div class="shfill low" style="width:15%"><span class="funnel-n">15 %</span></div></div>
+    </div>
+  </div>
+
+  <p class="callout"><b>Правило для продаж.</b> Само привлечение окупается меньше чем за одну смену, поэтому дело не в его цене, а в числе смен на человека. Длинный объект на 3-4 недели выгоднее двух коротких при той же выручке. Это должно влиять на то, за какой заказ мы беремся.</p>
+</section>
+
+<section>
+  <div class="head"><span class="num">06</span><h2>Где наш оффер упирается в механику</h2></div>
+
+  <div class="scroll">
+    <table>
+      <thead>
+        <tr><th>Обещание заказчику</th><th>Чем закрывается</th><th>Насколько прочно</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="name">Люди за 1-7 дней</td>
+          <td class="note">Своя база или бригадир</td>
+          <td class="note">Прочно, если база есть. Без базы срок держится только на бригадире</td>
+        </tr>
+        <tr>
+          <td class="name">10-25 человек за неделю</td>
+          <td class="note">Авито с продвижением плюс бригадиры одновременно</td>
+          <td class="note">10 реально. 25 это два канала на полной мощности, а не обычный режим</td>
+        </tr>
+        <tr class="hero">
+          <td class="name">Явка 90 процентов</td>
+          <td class="note">Только своя база</td>
+          <td class="note"><b>Самое уязвимое место.</b> 90 процентов бывает у сложившейся бригады. В первый день набора на новом объекте приходит заметно меньше</td>
+        </tr>
+        <tr>
+          <td class="name">Перекомплект 12 на 10</td>
+          <td class="note">Любой канал</td>
+          <td class="note">Покрывает текущий невыход, не покрывает провал первого дня</td>
+        </tr>
+        <tr>
+          <td class="name">Замена не в тот же день</td>
+          <td class="note">Признанное ограничение</td>
+          <td class="note">Честно: за несколько часов человека даёт только бригадир или биржа наличных</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="head"><span class="num">07</span><h2>Владелец ресурса или посредник</h2></div>
+  <p class="lede">Проверяется в обычном разговоре, без допроса. Если ответы ложатся в правую колонку, наша заявка уходит партнёру, а он публикует объявление и идёт по воронке из раздела 03.</p>
+
+  <div class="split">
+    <div class="col left">
+      <h3>Владелец ресурса</h3>
+      <ul>
+        <li>Называет <b>имена, объекты, кто где работает сейчас</b></li>
+        <li>Есть <b>группа в WhatsApp или телеграме</b>, знает её размер</li>
+        <li>Называет стоимость привлечения и <b>раскладывает её на части</b></li>
+        <li>На срочную заявку сначала уточняет объект, задачи и дату, <b>потом</b> называет срок</li>
+        <li><b>Различает</b> явку первого дня и явку действующей бригады</li>
+        <li>При невыходе описывает <b>порядок действий по шагам</b></li>
+      </ul>
+    </div>
+    <div class="col right">
+      <h3>Посредник</h3>
+      <ul>
+        <li>Говорит численностью: <b>«человек триста по региону»</b></li>
+        <li>Обещает <b>«поднять контакты»</b></li>
+        <li>Стоимость <b>«зависит от ситуации»</b></li>
+        <li><b>Сразу соглашается</b> на любой объём и любой срок</li>
+        <li>Называет <b>одно число</b> на все случаи</li>
+        <li>Отвечает <b>общими словами</b></li>
+      </ul>
+    </div>
+  </div>
+
+  <p class="callout">Это прямой ответ на вопрос о происхождении персонала, который стоит в analysis.md с самого начала: люди собственные или через третье лицо. Если через бригадиров, то партнёр такой же продавец чужого, как и мы, а цепочка до рабочего длиннее на одно звено с наценкой.</p>
+</section>
+
+<section>
+  <div class="head"><span class="num">08</span><h2>Пять вопросов партнёру</h2></div>
+  <p class="lede">Дополняют список из analysis.md, не повторяя его. Ответы нужны письменные.</p>
+
+  <div class="qs">
+    <div class="q">
+      <span class="q-n">01</span>
+      <div>
+        <p class="qt">Через что вы находите людей сейчас и какой канал даёт больше половины?</p>
+        <p class="flag"><b>Красный флаг:</b> «по-разному, везде».</p>
+      </div>
+    </div>
+    <div class="q">
+      <span class="q-n">02</span>
+      <div>
+        <p class="qt">Есть ли группа с теми, кто уже выходил, и сколько в ней человек по каждому городу?</p>
+        <p class="flag">Заодно закрывает открытый вопрос о численности по городам. <b>Красный флаг:</b> группы нет, но численность называется большая.</p>
+      </div>
+    </div>
+    <div class="q">
+      <span class="q-n">03</span>
+      <div>
+        <p class="qt">Из скольких откликов получается один человек, реально вышедший на объект?</p>
+        <p class="flag">Ожидаемо от 10 до 25. <b>Красный флаг:</b> непонимание вопроса.</p>
+      </div>
+    </div>
+    <div class="q">
+      <span class="q-n">04</span>
+      <div>
+        <p class="qt">Ваши 300-500 ₽ на вывод человека включают ваше время и повторный набор взамен ушедших?</p>
+        <p class="flag"><b>Красный флаг:</b> цифра меняется по ходу разговора.</p>
+      </div>
+    </div>
+    <div class="q">
+      <span class="q-n">05</span>
+      <div>
+        <p class="qt">Явка 90 процентов относится к первому дню на новом объекте или к действующей бригаде?</p>
+        <p class="flag">Самый важный вопрос списка: на этой цифре построен весь наш оффер.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="head"><span class="num">09</span><h2>Три вывода</h2></div>
+  <div class="takes">
+    <div class="take">
+      <h3>За людей мы конкурируем слабее уличной бригады</h3>
+      <p>Платим не ежедневно, работаем через безнал, старший на объекте не наш. Перебивается только регулярным объёмом смен, поэтому ценность первого длинного объекта выше, чем видно по его марже.</p>
+    </div>
+    <div class="take">
+      <h3>Партнёра проверять надо инструментом, а не численностью</h3>
+      <p>Вопрос «сколько у вас людей» даёт рассказ. Вопрос «сколько человек в вашей рабочей группе» даёт факт.</p>
+    </div>
+    <div class="take">
+      <h3>Наш первый канал работает в обе стороны, и это надо развести</h3>
+      <p>Вакансии разнорабочих на Авито мы читаем как сигнал спроса и выходим на заказчика. Если партнёр публикует там же свои вакансии, мы оказываемся в одной выдаче с теми, кому продаём: заказчик видит ставку работника 3 000 и получает готовое возражение против наших 4 000.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Внутренний разбор трека линейного персонала · 29 августа 2026<br>
+  Зона ответственности не менялась: подбор, проверка и оформление людей остаются на партнёре.<br>
+  Подтверждённые цифры взяты из commercial.md и разведки Авито от 21.08.2026. Остальное помечено в исходном файле как оценка и требует проверки.
+</footer>
+
+</div>
