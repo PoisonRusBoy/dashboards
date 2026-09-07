@@ -1,0 +1,759 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Восемь полок каталога</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <style>
+    :root { color-scheme: light dark; }
+    img { max-width: 100%; }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+<style>
+  /* ============================================================
+     Техническая записка. Холодная бумага, петроль как структура,
+     тёплые сигналы только там, где закодирован статус ворот.
+     ============================================================ */
+  :root {
+    --paper:      #F0F2F5;
+    --surface:    #FFFFFF;
+    --sunk:       #E4E8ED;
+    --ink:        #10161C;
+    --ink-2:      #333F4B;
+    --ink-3:      #5C6975;
+    --rule:       #CDD4DB;
+    --rule-2:     #A8B3BD;
+
+    /* акцент для текста, линеек и рамок: светлеет в тёмной теме */
+    --petrol:     #0E4A5A;
+    --petrol-2:   #146277;
+    /* плашка и её текст: остаются тёмными в ОБЕИХ темах, иначе
+       в тёмной теме шапка превращается в слепящий светлый блок */
+    --band:       #0E4A5A;
+    --band-ink:   #EAF1F3;
+
+    --pass:       #1B6B45;
+    --pass-bg:    #E2EDE7;
+    --gate:       #96590A;
+    --gate-bg:    #F3EADA;
+    --hard:       #9E2D22;
+    --hard-bg:    #F3E3E1;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:      #0E1418;
+      --surface:    #161E24;
+      --sunk:       #1B252C;
+      --ink:        #E4EAEF;
+      --ink-2:      #B3BEC8;
+      --ink-3:      #8593A0;
+      --rule:       #263039;
+      --rule-2:     #37444F;
+
+      --petrol:     #6FBACD;
+      --petrol-2:   #8FCEDD;
+      --band:       #0A2F3A;
+      --band-ink:   #D6E6EA;
+
+      --pass:       #6BC094;
+      --pass-bg:    #12241B;
+      --gate:       #D8A44A;
+      --gate-bg:    #241C0E;
+      --hard:       #DE8577;
+      --hard-bg:    #261613;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper:      #0E1418;
+    --surface:    #161E24;
+    --sunk:       #1B252C;
+    --ink:        #E4EAEF;
+    --ink-2:      #B3BEC8;
+    --ink-3:      #8593A0;
+    --rule:       #263039;
+    --rule-2:     #37444F;
+
+    --petrol:     #6FBACD;
+    --petrol-2:   #8FCEDD;
+    --band:       #0A2F3A;
+    --band-ink:   #D6E6EA;
+
+    --pass:       #6BC094;
+    --pass-bg:    #12241B;
+    --gate:       #D8A44A;
+    --gate-bg:    #241C0E;
+    --hard:       #DE8577;
+    --hard-bg:    #261613;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink-2);
+    font-family: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .shell { max-width: 68rem; margin: 0 auto; padding: 0 clamp(1.1rem, 4vw, 2.5rem); }
+
+  h1, h2, h3 {
+    font-family: "IBM Plex Sans Condensed", "IBM Plex Sans", system-ui, sans-serif;
+    font-weight: 700; color: var(--ink); margin: 0; text-wrap: balance;
+    letter-spacing: -.005em;
+  }
+  h1 { font-size: clamp(2.3rem, 6vw, 3.6rem); line-height: 1.04; letter-spacing: -.02em; }
+  h2 { font-size: clamp(1.5rem, 3.2vw, 2rem); line-height: 1.14; }
+  h3 { font-size: 1.05rem; font-weight: 600; }
+  p { margin: 0; }
+  strong, b { font-weight: 600; color: var(--ink); }
+  a { color: var(--petrol); text-underline-offset: 2px; text-decoration-thickness: 1px; }
+  a:hover { color: var(--petrol-2); }
+  a:focus-visible, summary:focus-visible { outline: 2px solid var(--petrol); outline-offset: 3px; }
+
+  .mono, code, .num {
+    font-family: "IBM Plex Mono", ui-monospace, "Cascadia Mono", monospace;
+    font-variant-numeric: tabular-nums;
+  }
+  code {
+    font-size: .84em; background: var(--sunk); border: 1px solid var(--rule);
+    padding: .06em .32em; color: var(--ink); white-space: nowrap;
+  }
+  .label {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: .69rem; font-weight: 500; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+
+  /* ---------- Шапка: полноширинная тёмная плашка ---------- */
+  .masthead { background: var(--band); color: var(--band-ink); }
+  .masthead .shell { padding-top: clamp(2rem, 5vw, 3.2rem); padding-bottom: clamp(2rem, 5vw, 3.2rem); }
+  .mh-meta { display: flex; flex-wrap: wrap; gap: .35rem 1.5rem; margin-bottom: 1.5rem; }
+  .mh-meta span {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: .69rem; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--band-ink); opacity: .72;
+  }
+  .masthead h1 { color: var(--band-ink); margin-bottom: 1.1rem; }
+  .masthead .standfirst {
+    font-size: clamp(1.02rem, 2vw, 1.18rem); max-width: 46ch;
+    color: var(--band-ink); opacity: .84; line-height: 1.5;
+  }
+
+  /* ---------- Секция: рельс слева, содержимое справа ---------- */
+  section {
+    display: grid; grid-template-columns: 9rem 1fr; gap: 0 2.5rem;
+    padding: clamp(2.2rem, 4.5vw, 3.2rem) 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  section:last-of-type { border-bottom: none; }
+  .rail { position: sticky; top: 1.5rem; align-self: start; padding-top: .4rem; }
+  .rail .label { display: block; border-top: 2px solid var(--petrol); padding-top: .5rem; color: var(--petrol); }
+  .col { min-width: 0; display: flex; flex-direction: column; gap: 1.6rem; }
+  .col > h2 { margin-bottom: -.5rem; }
+  .prose { max-width: 68ch; }
+  .stack { display: flex; flex-direction: column; gap: .95rem; }
+  .lede { font-size: 1.02rem; color: var(--ink-2); max-width: 68ch; }
+  @media (max-width: 50rem) {
+    section { grid-template-columns: 1fr; gap: 1rem 0; }
+    .rail { position: static; padding-top: 0; }
+    .rail .label { border-top: none; border-left: 2px solid var(--petrol); padding: 0 0 0 .6rem; }
+  }
+
+  /* ---------- Ответ и врезки ---------- */
+  .slab {
+    background: var(--surface); border: 1px solid var(--rule);
+    border-left: 4px solid var(--petrol);
+    padding: clamp(1.2rem, 3vw, 1.7rem);
+    display: flex; flex-direction: column; gap: .9rem;
+  }
+  .slab-lead {
+    font-family: "IBM Plex Sans Condensed", "IBM Plex Sans", sans-serif;
+    font-weight: 700; font-size: clamp(1.2rem, 2.6vw, 1.5rem);
+    line-height: 1.22; color: var(--ink); text-wrap: balance;
+  }
+  .slab-lead em { font-style: normal; color: var(--petrol); }
+
+  /* ---------- Ветки каталога ---------- */
+  .branches { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+  .branch { background: var(--surface); padding: 1.2rem 1.3rem; display: flex; flex-direction: column; gap: .85rem; }
+  .branch-name {
+    font-family: "IBM Plex Sans Condensed", sans-serif; font-weight: 700;
+    font-size: 1.25rem; color: var(--ink); text-transform: uppercase; letter-spacing: .02em;
+  }
+  .shelf-line { display: flex; align-items: baseline; justify-content: space-between; gap: .9rem; padding: .42rem 0; border-bottom: 1px solid var(--rule); }
+  .shelf-line:last-child { border-bottom: none; }
+  .shelf-line .n { font-size: .95rem; color: var(--ink); }
+  .shelf-line .c { font-family: "IBM Plex Mono", monospace; font-size: .71rem; color: var(--ink-3); white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+  /* ---------- Статусы ---------- */
+  .chip {
+    display: inline-flex; align-items: center; gap: .34rem; white-space: nowrap;
+    font-family: "IBM Plex Mono", monospace; font-size: .67rem; font-weight: 600;
+    letter-spacing: .03em; padding: .17rem .42rem; border: 1px solid;
+  }
+  .chip::before { content: ""; width: .42rem; height: .42rem; background: currentColor; flex: none; }
+  .chip-pass { color: var(--pass); background: var(--pass-bg); border-color: var(--pass); }
+  .chip-gate { color: var(--gate); background: var(--gate-bg); border-color: var(--gate); }
+  .chip-hard { color: var(--hard); background: var(--hard-bg); border-color: var(--hard); }
+
+  /* ---------- Смета ---------- */
+  .cost { border: 1px solid var(--rule); background: var(--surface); }
+  .cost-row {
+    display: grid; grid-template-columns: 1fr auto; gap: .2rem 1.4rem;
+    padding: .8rem 1.1rem; border-bottom: 1px solid var(--rule); align-items: baseline;
+  }
+  .cost-row:last-child { border-bottom: none; }
+  .cost-row .what { font-size: .95rem; color: var(--ink); }
+  .cost-row .what small { display: block; color: var(--ink-3); font-size: .82rem; line-height: 1.45; margin-top: .1rem; font-weight: 400; }
+  .cost-row .sum {
+    font-family: "IBM Plex Mono", monospace; font-size: .86rem; font-weight: 500;
+    color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums; text-align: right;
+  }
+  .cost-row .sum.unknown { color: var(--hard); }
+  .cost-total { background: var(--sunk); border-top: 2px solid var(--rule-2); }
+  .cost-total .what { font-weight: 600; }
+  .cost-total .sum { font-family: "IBM Plex Sans Condensed", sans-serif; font-size: 1.28rem; font-weight: 700; }
+
+  /* ---------- Матрица ---------- */
+  .table-wrap { overflow-x: auto; border: 1px solid var(--rule); background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; min-width: 55rem; font-size: .86rem; }
+  th, td { text-align: left; padding: .66rem .8rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  thead th {
+    font-family: "IBM Plex Mono", monospace; font-size: .64rem; font-weight: 600;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3);
+    background: var(--sunk); white-space: nowrap; border-bottom: 1px solid var(--rule-2);
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr.lead td { background: var(--sunk); }
+  tbody tr.lead td.cat { box-shadow: inset 3px 0 0 var(--petrol); }
+  tr.branch-head td {
+    background: var(--band); color: var(--band-ink);
+    font-family: "IBM Plex Mono", monospace; font-size: .64rem; letter-spacing: .16em;
+    text-transform: uppercase; font-weight: 600; padding: .42rem .8rem;
+  }
+  td.cat { font-weight: 600; color: var(--ink); white-space: nowrap; font-family: "IBM Plex Sans Condensed", sans-serif; font-size: .95rem; }
+  td.code { font-family: "IBM Plex Mono", monospace; font-size: .77rem; color: var(--ink-3); white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+  /* ---------- Разбор полок ---------- */
+  .notes { border-top: 1px solid var(--rule); }
+  .note {
+    display: grid; grid-template-columns: 12rem 1fr; gap: .3rem 1.5rem;
+    padding: .95rem 0; border-bottom: 1px solid var(--rule); align-items: start;
+  }
+  .note .nm {
+    font-family: "IBM Plex Sans Condensed", sans-serif; font-weight: 700;
+    color: var(--ink); font-size: 1.02rem; line-height: 1.2;
+  }
+  .note .nm small { display: block; font-family: "IBM Plex Mono", monospace; font-size: .71rem; color: var(--ink-3); font-weight: 400; margin-top: .2rem; letter-spacing: .02em; }
+  .note .nb { font-size: .94rem; }
+  @media (max-width: 40rem) { .note { grid-template-columns: 1fr; } }
+
+  /* ---------- Волны ---------- */
+  .waves { display: flex; flex-direction: column; gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+  .wave { background: var(--surface); display: grid; grid-template-columns: 6.5rem 1fr; gap: 0 1.4rem; padding: 1.15rem 1.3rem; }
+  .wave-n {
+    font-family: "IBM Plex Mono", monospace; font-size: .68rem; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--petrol); font-weight: 600; padding-top: .26rem; line-height: 1.5;
+  }
+  .wave-body { display: flex; flex-direction: column; gap: .5rem; }
+  .wave-title { font-family: "IBM Plex Sans Condensed", sans-serif; font-weight: 700; font-size: 1.1rem; color: var(--ink); }
+  .wave p { font-size: .93rem; }
+  .newvar {
+    align-self: flex-start; font-size: .81rem; color: var(--ink-2);
+    background: var(--sunk); border-left: 2px solid var(--rule-2); padding: .26rem .55rem;
+  }
+  .newvar b { color: var(--ink); font-weight: 600; }
+  @media (max-width: 40rem) { .wave { grid-template-columns: 1fr; gap: .5rem; } }
+
+  .excl { border-left: 3px solid var(--hard); background: var(--hard-bg); padding: 1rem 1.15rem; font-size: .93rem; }
+  .excl b { display: block; color: var(--ink); font-family: "IBM Plex Sans Condensed", sans-serif; font-size: 1.02rem; margin-bottom: .2rem; }
+
+  /* ---------- Варианты ---------- */
+  .options { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+  .opt { background: var(--surface); padding: 1.2rem 1.25rem; display: flex; flex-direction: column; gap: .6rem; }
+  .opt.lead { box-shadow: inset 0 3px 0 var(--petrol); }
+  .opt .on { font-family: "IBM Plex Mono", monospace; font-size: .65rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
+  .opt.lead .on { color: var(--petrol); }
+  .opt .ot { font-family: "IBM Plex Sans Condensed", sans-serif; font-weight: 700; font-size: 1.18rem; color: var(--ink); line-height: 1.18; }
+  .opt ul { margin: 0; padding-left: 1rem; display: flex; flex-direction: column; gap: .28rem; font-size: .89rem; }
+  .opt .oc { font-size: .85rem; color: var(--ink-3); border-top: 1px solid var(--rule); padding-top: .6rem; margin-top: .1rem; }
+
+  /* ---------- Чек-лист ---------- */
+  .checks { border-top: 1px solid var(--rule); counter-reset: c; }
+  .chk { display: grid; grid-template-columns: 2.2rem 1fr; gap: 0 .8rem; padding: .9rem 0; border-bottom: 1px solid var(--rule); }
+  .chk::before {
+    counter-increment: c; content: counter(c, decimal-leading-zero);
+    font-family: "IBM Plex Mono", monospace; font-size: .74rem; font-weight: 600;
+    color: var(--petrol); padding-top: .22rem; font-variant-numeric: tabular-nums;
+  }
+  .chk-b { display: flex; flex-direction: column; gap: .22rem; }
+  .chk-b .t { font-family: "IBM Plex Sans Condensed", sans-serif; font-weight: 700; color: var(--ink); font-size: 1.02rem; }
+  .chk-b .w { font-size: .91rem; }
+
+  /* ---------- Источники ---------- */
+  details.sources { border: 1px solid var(--rule); background: var(--surface); }
+  details.sources summary {
+    cursor: pointer; padding: .85rem 1.1rem; font-weight: 600; color: var(--ink);
+    font-size: .93rem; list-style: none; display: flex; justify-content: space-between; gap: 1rem;
+    font-family: "IBM Plex Sans Condensed", sans-serif;
+  }
+  details.sources summary::-webkit-details-marker { display: none; }
+  details.sources summary::after { content: "+"; color: var(--petrol); font-family: "IBM Plex Mono", monospace; }
+  details.sources[open] summary::after { content: "\2212"; }
+  details.sources .sb { padding: 0 1.1rem 1.1rem; display: flex; flex-direction: column; gap: .6rem; font-size: .86rem; }
+  details.sources .sb ul { margin: 0; padding-left: 1rem; display: flex; flex-direction: column; gap: .34rem; }
+
+  footer { border-top: 2px solid var(--petrol); padding: 1.6rem 0 3rem; font-size: .84rem; color: var(--ink-3); }
+  footer .shell { padding: 0 clamp(1.1rem, 4vw, 2.5rem); }
+</style>
+
+<header class="masthead">
+  <div class="shell">
+    <div class="mh-meta">
+      <span>Maison Bag</span>
+      <span>Расширение каталога</span>
+      <span>04.09.2026</span>
+    </div>
+    <h1>Восемь полок каталога</h1>
+    <p class="standfirst">Каталог строится под одного покупателя с двумя корзинами: себе и ребёнку. Разбор восьми полок, порядок их раскрытия и что берём в первую закупку.</p>
+  </div>
+</header>
+
+<main class="shell">
+
+  <section>
+    <div class="rail"><span class="label">Структура</span></div>
+    <div class="col">
+      <h2>Две ветки, восемь полок</h2>
+      <p class="lede">Это не восемь товарных направлений, а одна полка, разложенная по тому, как покупают. Канал, склад, поставка и покупатель у всех восьми общие.</p>
+      <div class="branches">
+        <div class="branch">
+          <span class="branch-name">Девушкам</span>
+          <div>
+            <div class="shelf-line"><span class="n">Аксессуары и сумки</span><span class="c">4202 · 4203 · 6214</span></div>
+            <div class="shelf-line"><span class="n">Платья</span><span class="c">6104 · 6204</span></div>
+            <div class="shelf-line"><span class="n">Нижнее бельё</span><span class="c">6107–6109 · 6207–6208</span></div>
+            <div class="shelf-line"><span class="n">Носки</span><span class="c">6115</span></div>
+          </div>
+        </div>
+        <div class="branch">
+          <span class="branch-name">Детям</span>
+          <div>
+            <div class="shelf-line"><span class="n">Детская одежда</span><span class="c">6111 · 6209</span></div>
+            <div class="shelf-line"><span class="n">Обувь</span><span class="c">6401–6405</span></div>
+            <div class="shelf-line"><span class="n">Боди</span><span class="c">6111</span></div>
+            <div class="shelf-line"><span class="n">Игрушки</span><span class="c">9503 · 9504</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="rail"><span class="label">Нулевой шаг</span></div>
+    <div class="col">
+      <h2>Семь полок из восьми не открываются, пока не поднят контур маркировки</h2>
+
+      <div class="slab">
+        <p class="slab-lead">Маркировку «Честный ЗНАК» требуют <em>семь полок из восьми</em>. Не требует только часть первой: сумки и малая кожгалантерея по коду <em>4202</em>.</p>
+        <p class="prose">Вдобавок четыре полки требуют сертификацию, а не декларацию: это вся детская ветка. Сертификат оформляется на товарную группу, поэтому детская одежда, боди, обувь и игрушки означают четыре отдельных документа, а не один.</p>
+        <p class="prose">Практический вывод: контур это не альтернатива и не то, что можно отложить. Это предусловие каталога, и вопрос только в том, на каком товаре его дешевле пройти.</p>
+      </div>
+
+      <div>
+        <h3 style="margin-bottom:.85rem">Из чего складывается нулевой шаг</h3>
+        <div class="cost">
+          <div class="cost-row">
+            <span class="what">Коды маркировки<small>Государственная цена эмиссии, 50 копеек без НДС. На партию в 200 штук это около 122 ₽</small></span>
+            <span class="sum">0,61 ₽/шт</span>
+          </div>
+          <div class="cost-row">
+            <span class="what">Декларация ТР ТС 017/2011<small>Взрослые полки: аксессуары, платья, бельё, носки. Оформляется на товарную группу</small></span>
+            <span class="sum">от 9 000 ₽</span>
+          </div>
+          <div class="cost-row">
+            <span class="what">Сертификат ТР ТС 007/2011 или 008/2011<small>Детские полки. Испытания в аккредитованной лаборатории, срок действия до 3 лет</small></span>
+            <span class="sum">от 41 100 ₽</span>
+          </div>
+          <div class="cost-row">
+            <span class="what">Электронный документооборот<small>ЭДО Лайт внутри личного кабинета бесплатен, платные операторы от 1 800 ₽/год</small></span>
+            <span class="sum">0–1 800 ₽/год</span>
+          </div>
+          <div class="cost-row">
+            <span class="what">Печать этикеток<small>При наших объёмах заказывается услугой, а не своим принтером: от 2 000 ₽ за 200 штук</small></span>
+            <span class="sum">от 2 000 ₽</span>
+          </div>
+          <div class="cost-row">
+            <span class="what">Облачная касса с ФФД 1.2<small>Арендуется, а не покупается. При онлайн-оплате уже работает по 54-ФЗ: проверить надо только версию ФФД, реквизиты маркировки несёт лишь 1.2</small></span>
+            <span class="sum">0 ₽, если есть<br>иначе 1 350–3 500 ₽/мес</span>
+          </div>
+          <div class="cost-row">
+            <span class="what">Государственная пошлина за внесение сведений<small>Введена с 01.01.2026. Размер и перечень категорий устанавливает Правительство, на дату документа не подтверждены</small></span>
+            <span class="sum unknown">уточнить</span>
+          </div>
+          <div class="cost-row">
+            <span class="what">Привязка кода к заказу при сборке<small>Отдельный сканер при наших объёмах не нужен: код считывается камерой телефона через приложение «Честный ЗНАК. Бизнес»</small></span>
+            <span class="sum">0 ₽</span>
+          </div>
+          <div class="cost-row cost-total">
+            <span class="what">Разовый вход на одну взрослую полку</span>
+            <span class="sum">около 11 тыс ₽</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="prose" style="font-size:.93rem;color:var(--ink-3)">Два условия, которые важнее суммы. Первое: коды наносятся до пересечения границы, то есть физически их клеит фабрика, и это отдельная договорённость с производством. Второе: система проверяет наличие разрешительных документов в момент ввода партии в оборот, поэтому декларация или сертификат должны быть готовы раньше, чем товар приедет, а не к моменту продажи. Выбытие при продаже уходит в чеке автоматически, ОФД передаёт коды без доплаты.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="rail"><span class="label">Матрица</span></div>
+    <div class="col">
+      <h2>Восемь полок по единому разрезу</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Полка</th>
+              <th scope="col">ТН ВЭД</th>
+              <th scope="col">Маркировка</th>
+              <th scope="col">Документ</th>
+              <th scope="col">Размерность</th>
+              <th scope="col">Выкуп</th>
+              <th scope="col">Кластер</th>
+              <th scope="col">Вход</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="branch-head"><td colspan="8">Девушкам</td></tr>
+            <tr class="lead">
+              <td class="cat">Аксессуары и сумки</td>
+              <td class="code">4202</td>
+              <td>не требуется</td>
+              <td>декларация</td>
+              <td>нет</td>
+              <td>80–90 %</td>
+              <td>Гуанчжоу, действующая</td>
+              <td><span class="chip chip-pass">открыта</span></td>
+            </tr>
+            <tr>
+              <td class="cat">Ремни и платки</td>
+              <td class="code">4203 30 · 6214</td>
+              <td>с 2024 и 2026</td>
+              <td>декларация</td>
+              <td>3–4 длины</td>
+              <td>80–90 %</td>
+              <td>Гуанчжоу, соседняя</td>
+              <td><span class="chip chip-gate">контур</span></td>
+            </tr>
+            <tr>
+              <td class="cat">Платья</td>
+              <td class="code">6104 · 6204</td>
+              <td>с 2024</td>
+              <td>декларация</td>
+              <td>5 размеров × цвета</td>
+              <td>35–50 %</td>
+              <td>Чаоян, Чаонань</td>
+              <td><span class="chip chip-hard">контур + сетка</span></td>
+            </tr>
+            <tr>
+              <td class="cat">Нижнее бельё</td>
+              <td class="code">6107–6109</td>
+              <td>с 01.03.2025</td>
+              <td>декларация</td>
+              <td>двумерная сетка</td>
+              <td>35–50 %</td>
+              <td>Чаоян, сильнейший</td>
+              <td><span class="chip chip-hard">контур + сетка</span></td>
+            </tr>
+            <tr>
+              <td class="cat">Носки</td>
+              <td class="code">6115</td>
+              <td>с 01.03.2025</td>
+              <td>декларация</td>
+              <td>2–3 размера</td>
+              <td>80–90 %</td>
+              <td>Фошань, 25 км</td>
+              <td><span class="chip chip-gate">контур</span></td>
+            </tr>
+            <tr class="branch-head"><td colspan="8">Детям</td></tr>
+            <tr>
+              <td class="cat">Боди</td>
+              <td class="code">6111</td>
+              <td>с 01.03.2025</td>
+              <td>сертификат 007</td>
+              <td>5–6 ростовок</td>
+              <td>60–75 %</td>
+              <td>Чаоян</td>
+              <td><span class="chip chip-hard">контур + сертификат</span></td>
+            </tr>
+            <tr>
+              <td class="cat">Детская одежда</td>
+              <td class="code">6111 · 6209</td>
+              <td>с 01.03.2025</td>
+              <td>сертификат 007</td>
+              <td>12+ ростовок</td>
+              <td>35–50 %</td>
+              <td>Чаоян, Чаонань</td>
+              <td><span class="chip chip-hard">контур + сертификат</span></td>
+            </tr>
+            <tr>
+              <td class="cat">Игрушки</td>
+              <td class="code">9503 · 9504</td>
+              <td>с 01.09.2026</td>
+              <td>сертификат 008</td>
+              <td>нет</td>
+              <td>80–90 %</td>
+              <td>Чэнхай</td>
+              <td><span class="chip chip-hard">контур + сертификат</span></td>
+            </tr>
+            <tr>
+              <td class="cat">Детская обувь</td>
+              <td class="code">6401–6405</td>
+              <td>с 2020</td>
+              <td>сертификат 007</td>
+              <td>размер и полнота</td>
+              <td>30–45 %</td>
+              <td>вне Гуандуна</td>
+              <td><span class="chip chip-hard">контур + сертификат</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:.85rem;color:var(--ink-3)">«Выкуп» это доля заказов, которые покупатель оставляет себе. По одежде и обуви взята рыночная норма онлайн-торговли: главная причина возврата это размер (45 % случаев), вторая посадка и фасон (30 %).</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="rail"><span class="label">Разбор</span></div>
+    <div class="col">
+      <h2>Что решает на каждой полке</h2>
+      <p class="lede">По одному факту на полку: тот, который двигает решение сильнее остальных.</p>
+      <div class="notes">
+        <div class="note">
+          <span class="nm">Аксессуары и сумки<small>4202</small></span>
+          <span class="nb"><b>Единственная полка, открытая сегодня.</b> Действующая декларация и действующая фабрика покрывают кошельки, картхолдеры, косметички, ключницы и поясные сумки: у них тот же товарный код, что у сумок. Ремни и платки лежат на той же полке, но уже за контуром маркировки.</span>
+        </div>
+        <div class="note">
+          <span class="nm">Платья<small>6104 · 6204</small></span>
+          <span class="nb"><b>Лучшая полка по каналу и худшая по риску.</b> Платье это основной формат контента, продавать его нечем не надо. Но каждая модель разворачивается в пять размеров на цвет, а половина заказов возвращается из-за размера и посадки. Заходить узким кроем, где посадка прощает ошибку: свободный силуэт, трикотаж, запах.</span>
+        </div>
+        <div class="note">
+          <span class="nm">Нижнее бельё<small>6107–6109</small></span>
+          <span class="nb"><b>Сильнейшее производство и худшая размерная сетка.</b> Гуандун делает половину всего белья Китая, и Чаоян это самая полная производственная цепочка в стране. Против этого стоит двумерная сетка бюстгальтера (обхват × чашка), которая разворачивает одну модель в 10–20 позиций вместо пяти. Расчёт на невозвратность белья не работает: перечень невозвратных товаров не применяется к дистанционной торговле, а мы продаём онлайн.</span>
+        </div>
+        <div class="note">
+          <span class="nm">Носки<small>6115</small></span>
+          <span class="nb"><b>Не самостоятельная полка, а добор к чеку.</b> Размерность почти нулевая, возвраты минимальные, кластер в 25 км от действующей фабрики. Но чек такой, что полка не окупает собственный цикл. Смысл появляется только в подарочных наборах и в комплекте к основной покупке.</span>
+        </div>
+        <div class="note">
+          <span class="nm">Боди<small>6111</small></span>
+          <span class="nb"><b>Лучший вход в детскую ветку.</b> Узкая ростовка (5–6 позиций против 12+ у детской одежды), покупка наборами, высокая повторяемость: ребёнок вырастает из размера за месяцы. Кластер тот же, что у платьев и белья. Цена входа это первый сертификат ТР ТС 007/2011, причём по самой строгой схеме, потому что боди это первый слой.</span>
+        </div>
+        <div class="note">
+          <span class="nm">Детская одежда<small>6111 · 6209</small></span>
+          <span class="nb"><b>Естественное продолжение боди, но не начало ветки.</b> Ростовки идут шагом в 6 см от 74 до 146, то есть двенадцать позиций и выше на модель. Требования жёстче взрослых: формальдегид ограничен 20 мкг/г независимо от слоя, против 75–300 у взрослой одежды.</span>
+        </div>
+        <div class="note">
+          <span class="nm">Игрушки<small>9503 · 9504</small></span>
+          <span class="nb"><b>Безразмерность против самого свежего контура.</b> Ни размеров, ни возвратов по посадке, а кластер Чэнхай даёт четверть всего производства игрушек Китая. Против этого сертификация по ТР ТС 008/2011 и маркировка, которая закрылась полностью 01.09.2026. Отдельное ограничение: под единым брендом в эту полку встаёт не масс-маркет, а дерево и текстиль, то есть закупка дороже средней по категории.</span>
+        </div>
+        <div class="note">
+          <span class="nm">Детская обувь<small>6401–6405</small></span>
+          <span class="nb"><b>Единственная полка без единого плюса.</b> Худшая размерность из восьми (размер, полнота, быстрый рост ноги), максимальные возвраты, сертификат по 007/2011 и единственный случай, когда выход на производство в Гуандуне не помогает: массовое обувное производство сосредоточено в Цзиньцзяне и Вэньчжоу, в других провинциях.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="rail"><span class="label">Порядок</span></div>
+    <div class="col">
+      <h2>Как раскрывать восемь полок</h2>
+      <p class="lede">Принцип один: каждая волна добавляет ровно одну новую переменную и переиспользует документ или кластер предыдущей. Если в одной закупке сойдутся новый контур, новый кластер и новая размерная сетка, при плохом результате будет непонятно, что именно не сработало.</p>
+
+      <div class="waves">
+        <div class="wave">
+          <span class="wave-n">Волна 0<br>сейчас</span>
+          <div class="wave-body">
+            <span class="wave-title">Малая кожгалантерея</span>
+            <span class="newvar">новых переменных <b>ноль</b></span>
+            <p>Кошельки, картхолдеры, косметички, ключницы, поясные сумки. Тот же код, та же декларация, та же фабрика, тот же контент. Не требует нулевого шага вообще, поэтому идёт параллельно с его подготовкой, а не после. Проверяет ровно одно: берут ли аксессуар к сумке.</p>
+          </div>
+        </div>
+        <div class="wave">
+          <span class="wave-n">Волна 1</span>
+          <div class="wave-body">
+            <span class="wave-title">Ремни и платки, следом носки</span>
+            <span class="newvar">новая переменная: <b>контур маркировки</b></span>
+            <p>Достраивает полку аксессуаров до полной и одновременно проводит проект через маркировку целиком: регистрация, коды, нанесение на фабрике, ЭДО, выбытие через кассу. Товар для этого выбран по цене ошибки: закупка маленькая, размерность почти нулевая, кластер прежний. Носки добавляются здесь же как подарочный набор, отдельного цикла они не стоят.</p>
+          </div>
+        </div>
+        <div class="wave">
+          <span class="wave-n">Волна 2</span>
+          <div class="wave-body">
+            <span class="wave-title">Платья</span>
+            <span class="newvar">новые переменные: <b>размерная сетка и кластер Чаоян</b></span>
+            <p>Контур уже стоит, поэтому проверяются только две вещи вместо трёх. Узкий крой, прощающий посадку. Здесь же впервые собирается статистика размеров покупателей, которая понадобится всем следующим волнам.</p>
+          </div>
+        </div>
+        <div class="wave">
+          <span class="wave-n">Волна 3</span>
+          <div class="wave-body">
+            <span class="wave-title">Боди, вход в детскую ветку</span>
+            <span class="newvar">новая переменная: <b>сертификация 007/2011</b></span>
+            <p>Кластер тот же, что в волне 2, контур маркировки уже пройден. Единственное новое это детский сертификат, и берётся он на полке с самой узкой ростовкой в ветке. Открывает вторую корзину того же покупателя.</p>
+          </div>
+        </div>
+        <div class="wave">
+          <span class="wave-n">Волна 4</span>
+          <div class="wave-body">
+            <span class="wave-title">Детская одежда, затем нижнее бельё</span>
+            <span class="newvar">новых переменных <b>нет</b>, только глубина</span>
+            <p>Обе полки живут в кластере Чаоян и опираются на документы предыдущих волн. Бельё ставится последним из взрослых полок сознательно: его двумерная сетка требует накопленной статистики размеров, которой к волне 4 уже есть откуда взяться.</p>
+          </div>
+        </div>
+        <div class="wave">
+          <span class="wave-n">Волна 5</span>
+          <div class="wave-body">
+            <span class="wave-title">Игрушки</span>
+            <span class="newvar">новые переменные: <b>кластер Чэнхай и сертификат 008/2011</b></span>
+            <p>Отдельный кластер, отдельный технический регламент, отдельный сертификат. Ставится последней не из-за слабости полки, а потому что не переиспользует ничего из предыдущих волн. Имеет смысл, когда в детской ветке уже есть свой трафик.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="excl">
+        <b>Детская обувь в план не входит</b>
+        Единственная из восьми полок, у которой нет ни одного преимущества: худшая размерность, максимальные возвраты, детский сертификат и производство за пределами провинции, где работает наш выход на фабрики. Возвращаться к ней имеет смысл только как к закупке готового бренда под перепродажу, а не как к собственному производству.
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="rail"><span class="label">Первая закупка</span></div>
+    <div class="col">
+      <h2>Три варианта по объёму вложений</h2>
+      <p class="lede">Детская ветка не входит ни в один: она требует сертификатов, которых пока нет, и открывается волной 3.</p>
+      <div class="options">
+        <div class="opt">
+          <span class="on">Вариант A · минимальный</span>
+          <span class="ot">Только малая кожгалантерея</span>
+          <ul>
+            <li>Ноль новых документов</li>
+            <li>Ноль нового оборудования</li>
+            <li>Действующая фабрика и маршрут</li>
+            <li>Цена ошибки минимальная из возможных</li>
+          </ul>
+          <span class="oc">Проверяет спрос на аксессуар к сумке, не трогая инфраструктуру. Не открывает остальные семь полок.</span>
+        </div>
+        <div class="opt lead">
+          <span class="on">Вариант B · рекомендованный</span>
+          <span class="ot">Кожгалантерея плюс нулевой шаг и ремни</span>
+          <ul>
+            <li>Полка аксессуаров закрывается целиком</li>
+            <li>Контур маркировки поднят и проверен</li>
+            <li>Все семь остальных полок разблокированы</li>
+            <li>Оборудование покупать не надо</li>
+          </ul>
+          <span class="oc">Стоит около 11 тыс ₽ разово и снимает главное ограничение каталога. Упирается не в деньги, а в срок оформления декларации.</span>
+        </div>
+        <div class="opt">
+          <span class="on">Вариант C · расширенный</span>
+          <span class="ot">Вариант B плюс платья узким кроем</span>
+          <ul>
+            <li>Женская ветка открыта полностью</li>
+            <li>Задействован основной формат контента</li>
+            <li>Появляется статистика размеров</li>
+            <li>Две новые переменные в одной закупке</li>
+          </ul>
+          <span class="oc">Самый быстрый выход на выручку и самый высокий риск: возвраты по одежде вдвое выше заложенных в текущую модель.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="rail"><span class="label">Перед закупкой</span></div>
+    <div class="col">
+      <h2>Что уточнить, чтобы расчёт закрылся</h2>
+      <div class="checks">
+        <div class="chk">
+          <div class="chk-b">
+            <span class="t">Делает ли действующая фабрика малую кожгалантерею</span>
+            <span class="w">Единственный вопрос, способный обнулить волну 0. Если нет, нужна соседняя фабрика того же кластера (Шилин, Хуаду, Паньюй), и тогда у волны 0 появляется своя новая переменная.</span>
+          </div>
+        </div>
+        <div class="chk">
+          <div class="chk-b">
+            <span class="t">Готова ли фабрика наносить коды маркировки до отгрузки</span>
+            <span class="w">Коды должны быть на товаре до пересечения границы. Если производство на это не идёт, маркировка переезжает на таможенный склад, и это отдельная статья расходов и сроков.</span>
+          </div>
+        </div>
+        <div class="chk">
+          <div class="chk-b">
+            <span class="t">Сколько занимает повторный заказ на известной фабрике</span>
+            <span class="w">Первый цикл занял пять месяцев от заказа до приёмки, из них 17 дней транзит. Повторный обычно короче. Если он укладывается в 30–45 дней производства плюс транзит, сентябрьское решение успевает к подарочному сезону.</span>
+          </div>
+        </div>
+        <div class="chk">
+          <div class="chk-b">
+            <span class="t">Размер государственной пошлины за внесение сведений</span>
+            <span class="w">Введена с 01.01.2026, размер и перечень категорий устанавливает Правительство. Это единственная строка нулевого шага, которую не удалось оценить, и её надо запросить до расчёта закупки.</span>
+          </div>
+        </div>
+        <div class="chk">
+          <div class="chk-b">
+            <span class="t">Потолок бюджета первой закупки</span>
+            <span class="w">Определяет выбор между вариантами A, B и C, а внутри выбранного варианта задаёт глубину: широкая линейка мелким тиражом или три позиции нормальным.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="rail"><span class="label">Источники</span></div>
+    <div class="col">
+      <details class="sources">
+        <summary>Источники и статус проверки<span aria-hidden="true"></span></summary>
+        <div class="sb">
+          <p>Регуляторные требования проверялись веб-поиском 02–03.09.2026. Перечни маркировки расширяются ежегодно, поэтому перед закупкой статус конкретного кода сверяется в личном кабинете, а не по статье. Оценки закупочных цен и вклада по новым полкам построены от известной экономики сумок и котировками фабрики не подтверждены.</p>
+          <ul>
+            <li><a href="https://markirovka.ru/community/shoes-and-clothes/rasshirenie-perechnya-tovarov-legkoy-promyshlennosti-s-1-marta-2026">Расширение перечня товаров лёгкой промышленности с 1 марта 2026</a></li>
+            <li><a href="https://www.alta.ru/tamdoc/25ps2129/">Постановление Правительства РФ от 25.12.2025 № 2129</a></li>
+            <li><a href="https://www.moysklad.ru/poleznoe/markirovka-tovarov/odezhda/">Перечень товаров лёгкой промышленности по волнам и кодам ТН ВЭД</a></li>
+            <li><a href="https://www.moysklad.ru/poleznoe/markirovka-tovarov/kalendar-markirovki/">Календарь маркировки 2026–2027</a></li>
+            <li><a href="https://truemark.ru/markirovka-detskih-igrushek-2025/">Сроки маркировки детских игрушек</a></li>
+            <li><a href="https://ogost.ru/prais/trts-007/">Стоимость сертификата и декларации по ТР ТС 007/2011</a></li>
+            <li><a href="https://serter.ru/knowledge-base/tr-ts-007-detskie-tovary">Требования ТР ТС 007/2011 к детской продукции</a></li>
+            <li><a href="https://www.cleverence.ru/articles/markirovka-tovarov/-stoimost-markirovki-chestnyy-znak-2026-skolko-stoit-podklyuchenie-i-kody/">Стоимость подключения к маркировке в 2026</a></li>
+            <li><a href="https://www.buhsoft.ru/article/5401-gosposhlina-za-vnesenie-v-gis-svedeniy-o-markirovke-s-2026-goda">Государственная пошлина за внесение сведений в систему с 2026 года</a></li>
+            <li><a href="https://rskrf.ru/consumer_rights/solutions/shops/vozvrat-nizhnego-belya/">Правила возврата белья, включая дистанционную торговлю</a></li>
+            <li><a href="https://guruseller.ru/statistika-vozvratov-po-kategoriyam-kak-povysit-procent-vykupa-na-marketpleysah-v-2025-godu/">Статистика выкупа и возвратов по категориям</a></li>
+            <li><a href="https://openchina.com.ua/promyshlennye-klastery-v-provinczii-guandun-kitaj/">Промышленные кластеры провинции Гуандун</a></li>
+            <li><a href="https://ru.ystar-underwear.com/info/the-underwear-capital-of-the-world-china-s-t-70451272.html">Производственные базы нижнего белья в Китае</a></li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="shell">Внутренний документ Maison Bag, 04.09.2026. Записка готовит выбор и не заменяет его.</div>
+</footer>
+</body>
+</html>
