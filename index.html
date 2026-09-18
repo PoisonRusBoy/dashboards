@@ -1,88 +1,372 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>OOM Yoga Tour — концепты сайта-визитки</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#F1E9D8" />
+<title>Мой день</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400;1,9..144,500&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
-  :root{--paper:#f6efe4;--card:#fffaf3;--ink:#2c2420;--soft:#7a6a5e;--rose:#b0576e;--line:rgba(120,86,60,.2);
-    --serif:'Cormorant Garamond',Georgia,serif;--sans:'Segoe UI',Inter,system-ui,sans-serif}
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
-  .wrap{max-width:1240px;margin:0 auto;padding:0 32px}
-  header{text-align:center;padding:70px 32px 18px}
-  header .k{font-size:12px;letter-spacing:.4em;text-transform:uppercase;color:var(--rose);font-weight:600}
-  header h1{font-family:var(--serif);font-style:italic;font-weight:400;font-size:clamp(38px,6vw,64px);margin:16px 0 12px}
-  header p{color:var(--soft);max-width:60ch;margin:0 auto;font-size:17px}
-  .note{max-width:720px;margin:22px auto 0;background:var(--card);border:1px solid var(--line);border-radius:12px;
-    padding:16px 22px;font-size:14.5px;color:#5c4e43;text-align:left}
-  .note b{color:var(--rose)}
-  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;padding:44px 0 30px}
-  @media(max-width:1000px){.grid{grid-template-columns:1fr}}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;
-    box-shadow:0 20px 44px rgba(60,40,28,.08)}
-  .frame{height:400px;overflow-y:auto;overflow-x:hidden;background:#241d1a;border-bottom:1px solid var(--line)}
-  .frame img{width:100%;display:block}
-  .body{padding:24px 24px 26px;display:flex;flex-direction:column;flex:1}
-  .tag{align-self:flex-start;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--rose);
-    border:1px solid var(--line);border-radius:999px;padding:6px 14px;margin-bottom:14px}
-  .card h2{font-family:var(--serif);font-style:italic;font-weight:500;font-size:28px;margin-bottom:8px}
-  .card .desc{font-size:15px;color:#5c4e43;flex:1}
-  .meta{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 20px}
-  .chip{font-size:12px;color:var(--soft);background:var(--paper);border-radius:6px;padding:6px 10px}
-  .open{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--ink);color:var(--paper);
-    border-radius:999px;padding:14px 24px;font-size:14px;font-weight:600;letter-spacing:.02em;text-decoration:none;transition:.2s}
-  .open:hover{background:var(--rose)}
-  .hint{text-align:center;color:var(--soft);font-size:13px;padding-bottom:60px}
+  :root{
+    --paper:#F1E9D8; --card:#FBF6EB; --ink:#2C2620; --muted:#9C907B;
+    --line:#E6DAC2; --accent:#B0532C; --accent-soft:#EBD2BB; --sage:#6E7A5B;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; }
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:'Karla', ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:var(--accent-soft); }
+  .grain{ position:fixed; inset:0; pointer-events:none; opacity:.05; mix-blend-mode:multiply; z-index:0;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  .wrap{ max-width:680px; margin:0 auto; padding:44px 20px 80px; position:relative; z-index:1; }
+
+  .inp{ background:transparent; border:none; outline:none; width:100%; font-family:inherit; color:inherit; padding:0; }
+  .inp::placeholder{ color:#C3B7A0; }
+
+  .date{ font-family:'Fraunces', serif; font-style:italic; font-size:13px; letter-spacing:.06em; color:var(--accent); text-transform:lowercase; margin-bottom:6px; }
+  .title-input{ font-family:'Fraunces', serif; font-weight:600; font-size:40px; line-height:1.05; color:var(--ink); letter-spacing:-.01em; }
+
+  .progress-row{ display:flex; align-items:center; gap:14px; margin-top:18px; }
+  .progress-track{ flex:1; height:8px; background:#E6DAC2; border-radius:99px; overflow:hidden; }
+  .progress-fill{ height:100%; background:var(--accent); border-radius:99px; transition:width .4s cubic-bezier(.2,.7,.2,1); }
+  .progress-count{ font-size:13px; color:var(--muted); white-space:nowrap; font-weight:600; }
+
+  #blocks{ display:flex; flex-direction:column; gap:18px; margin-top:30px; }
+
+  .block{ background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px 18px 14px;
+    box-shadow:0 1px 0 #ffffff inset, 0 10px 24px -18px rgba(60,45,25,.5);
+    animation:rise .55s cubic-bezier(.2,.75,.25,1) both; }
+  .block-head{ display:flex; align-items:flex-start; gap:10px; margin-bottom:10px; }
+  .block-num{ font-family:'Fraunces', serif; font-style:italic; font-size:18px; color:var(--accent); line-height:1.4; min-width:26px; }
+  .block-title-input{ font-family:'Fraunces', serif; font-weight:600; font-size:19px; color:var(--ink); line-height:1.35; flex:1; }
+  .block-tools{ display:flex; gap:2px; flex-shrink:0; }
+
+  .iconbtn{ display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:8px; border:none; background:transparent; color:var(--muted); cursor:pointer; transition:all .18s ease; }
+  .iconbtn:hover{ background:#00000008; color:var(--accent); }
+  .iconbtn:disabled{ cursor:default; }
+
+  .items{ padding-left:36px; }
+  .item{ display:flex; align-items:center; gap:11px; padding:5px 0; }
+  .checkbox{ flex-shrink:0; width:21px; height:21px; border-radius:7px; border:1.8px solid #CDBFA6; background:transparent; color:#fff; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:all .18s ease; }
+  .checkbox.done{ border:none; background:var(--sage); animation:pop .28s ease; }
+  .item-input{ font-size:16px; color:var(--ink); transition:color .2s ease; }
+  .item-input.done{ color:var(--muted); text-decoration:line-through; text-decoration-color:#C9BBA2; }
+  .x-btn{ display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:8px; border:none; background:transparent; color:var(--muted); cursor:pointer; opacity:.55; transition:all .18s ease; }
+  .x-btn:hover{ background:#00000008; color:var(--accent); opacity:1; }
+
+  .add-item{ display:inline-flex; align-items:center; gap:6px; margin-top:8px; padding:4px 0; border:none; background:transparent; color:var(--muted); font-family:inherit; font-size:14px; font-weight:600; cursor:pointer; transition:color .18s ease; }
+  .add-item:hover{ color:var(--accent); }
+
+  .addblock-row{ margin-top:26px; display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  .select-wrap{ position:relative; flex:1 1 240px; min-width:200px; }
+  .pl-select{ -webkit-appearance:none; appearance:none; width:100%; padding:12px 36px 12px 14px; border-radius:12px; border:1px solid var(--line); background:var(--card); color:var(--ink); font-family:inherit; font-size:15px; cursor:pointer; }
+  .select-caret{ position:absolute; right:12px; top:50%; transform:translateY(-50%); color:var(--muted); pointer-events:none; display:inline-flex; }
+  .btn-primary{ display:inline-flex; align-items:center; gap:7px; padding:12px 18px; border-radius:12px; border:none; background:var(--accent); color:#FBF6EB; font-family:inherit; font-size:15px; font-weight:700; cursor:pointer; transition:filter .18s ease; }
+  .btn-primary:hover{ filter:brightness(1.05); }
+
+  .footer{ margin-top:34px; padding-top:20px; border-top:1px solid var(--line); display:flex; gap:18px; flex-wrap:wrap; align-items:center; }
+  .link-btn{ display:inline-flex; align-items:center; gap:7px; border:none; background:transparent; color:var(--muted); font-family:inherit; font-size:14px; font-weight:600; cursor:pointer; transition:color .18s ease; }
+  .link-btn:hover{ color:var(--accent); }
+  .footer-note{ margin-left:auto; font-size:12.5px; color:#B6A98F; font-style:italic; font-family:'Fraunces', serif; }
+
+  .overlay{ position:fixed; inset:0; background:rgba(44,38,32,.38); display:none; align-items:center; justify-content:center; padding:20px; z-index:50; }
+  .overlay.show{ display:flex; animation:rise .2s ease both; }
+  .dialog{ background:var(--card); border-radius:18px; padding:24px 22px; max-width:360px; width:100%; box-shadow:0 30px 60px -20px rgba(40,28,15,.6); border:1px solid var(--line); }
+  .dialog p{ margin:0 0 20px; font-size:16px; color:var(--ink); line-height:1.45; }
+  .dialog-actions{ display:flex; gap:10px; justify-content:flex-end; }
+  .btn-outline{ padding:10px 16px; border-radius:10px; border:1px solid var(--line); background:transparent; color:var(--ink); font-family:inherit; font-size:14px; font-weight:600; cursor:pointer; }
+
+  @keyframes rise{ from{opacity:0; transform:translateY(12px)} to{opacity:1; transform:none} }
+  @keyframes pop{ 0%{transform:scale(.7)} 60%{transform:scale(1.12)} 100%{transform:scale(1)} }
 </style>
 </head>
 <body>
-<header>
-  <div class="k">OOM Yoga Tour · концепты</div>
-  <h1>Три направления сайта-визитки</h1>
-  <p>Один и тот же контент — тексты, программа и фото из лукбука — в трёх разных дизайн-системах. Пролистай превью в карточке или открой макет целиком, затем выбери направление для сборки на InSales.</p>
-  <div class="note"><b>Контакты — заглушки.</b> Кнопки Telegram/WhatsApp ведут на плейсхолдеры (t.me/mrvaleriyav, wa.me/…). Пришли точные @ и номер — подставлю. Фото и тексты финальные, из готового лукбука.</div>
-</header>
-
+<div class="grain"></div>
 <div class="wrap">
-  <div class="grid">
-    <div class="card">
-      <div class="frame"><img src="shots/a.png" alt="Вариант A — превью" loading="lazy" /></div>
-      <div class="body">
-        <span class="tag">Вариант A</span>
-        <h2>Editorial-элегантность</h2>
-        <p class="desc">Классическая «глянцевая» подача: крупная курсивная антиква Cormorant, воздух, тонкие линии, розовый акцент бренда. Спокойно, дорого, женственно — веб-версия существующего лукбука.</p>
-        <div class="meta"><span class="chip">Cormorant Garamond</span><span class="chip">крем · розовый</span><span class="chip">центр, симметрия</span></div>
-        <a class="open" href="variant-a-editorial.html">Открыть макет A →</a>
-      </div>
+  <header>
+    <div class="date" id="date"></div>
+    <input class="inp title-input" id="title" />
+    <div class="progress-row">
+      <div class="progress-track"><div class="progress-fill" id="pfill" style="width:0%"></div></div>
+      <div class="progress-count" id="pcount">0 / 0</div>
     </div>
+  </header>
 
-    <div class="card">
-      <div class="frame"><img src="shots/b.png" alt="Вариант B — превью" loading="lazy" /></div>
-      <div class="body">
-        <span class="tag">Вариант B</span>
-        <h2>Тёплый boho</h2>
-        <p class="desc">Уютное путешествие: тёплая терракота, песок и олива, мягкая антиква Fraunces, арочные фото, скруглённые карточки, сплит-герой. Живее и «человечнее», ближе к travel-настроению.</p>
-        <div class="meta"><span class="chip">Fraunces</span><span class="chip">терракота · песок</span><span class="chip">арки, асимметрия</span></div>
-        <a class="open" href="variant-b-boho.html">Открыть макет B →</a>
-      </div>
+  <div id="blocks"></div>
+
+  <div class="addblock-row">
+    <div class="select-wrap">
+      <select class="pl-select" id="preset"></select>
+      <span class="select-caret" id="caret"></span>
     </div>
+    <button class="btn-primary" id="addblock"></button>
+  </div>
 
-    <div class="card">
-      <div class="frame"><img src="shots/c.png" alt="Вариант C — превью" loading="lazy" /></div>
-      <div class="body">
-        <span class="tag">Вариант C</span>
-        <h2>Кинематографичный минимал</h2>
-        <p class="desc">Современно и премиально: тёмная тема, фото на весь экран, крупная гротеск-типографика заглавными с курсивными акцентами, аквамариновый цвет моря, «журнальная» нумерация программы.</p>
-        <div class="meta"><span class="chip">Grotesk + antiqua</span><span class="chip">тёмный · аква</span><span class="chip">full-bleed, сетка</span></div>
-        <a class="open" href="variant-c-cinematic.html">Открыть макет C →</a>
-      </div>
+  <div class="footer">
+    <button class="link-btn" id="newday"></button>
+    <button class="link-btn" id="resetall">Сбросить к шаблону</button>
+    <span class="footer-note">Молитвы — каркас дня. Всё остальное живёт между ними.</span>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="dialog">
+    <p id="dlg-msg"></p>
+    <div class="dialog-actions">
+      <button class="btn-outline" id="dlg-cancel">Отмена</button>
+      <button class="btn-primary" id="dlg-ok" style="padding:10px 16px;border-radius:10px;font-size:14px"></button>
     </div>
   </div>
-  <p class="hint">Совет: можно смешивать — например, «герой от C, но палитра A». Скажи, что нравится, и я доведу выбранное до финала.</p>
 </div>
+
+<script>
+(function(){
+  "use strict";
+
+  var STORAGE_KEY = "planner-state-v1";
+
+  var PRESETS = {
+    "Утро — личный блок": ["Молитва","Зарядка / ОФП","Душ","Зубы","Бритьё / уход за бородой","Уложить волосы","Дезодорант","Одеться"],
+    "Утро — семья и сад": ["Каша дочке","Заправить кровать","Убрать лоток","Покормить дочку","Кофе","Помощь жене (по просьбе)","Выехать в сад"],
+    "Дорога из сада": ["Главное дело сегодня: …"],
+    "Сегмент 1 — самые свежие ~2 часа": ["Разогрев / обучение, 30–40 мин: …","Основная работа — первый шаг: …"],
+    "Обеденная молитва": ["Молитва — разделитель и перезагрузка"],
+    "Сегмент 2 — мелочёвка и доделки": ["…","…","…"],
+    "Вечерняя молитва": ["Молитва — закрываю день"],
+    "Вечер — закрытие дня": ["Дневник: что получилось","Дневник: что выбило из колеи","Дневник: что меняю завтра","Шаг на завтра 1","Шаг на завтра 2","Шаг на завтра 3"],
+    "Свободно — не планировать": ["Отдых, семья, творчество — без чек-листа"],
+    "Главный фокус сейчас": ["Главный фокус: …","Почему именно он сейчас: …"],
+    "Направление: Доход / работа": ["Пункт назначения: …","За квартал: …","За месяц: …"],
+    "Направление: Обучение": ["Пункт назначения: …","Что учу под работу: …","За месяц: …"],
+    "Направление: Здоровье": ["Пункт назначения: …","За месяц: …"],
+    "Эта неделя — мост": ["Фокус недели: …","Шаг 1","Шаг 2","Шаг 3"],
+    "Парковка идей": ["…","…"]
+  };
+  var DEFAULT_KEYS = [
+    "Утро — личный блок","Утро — семья и сад","Дорога из сада","Сегмент 1 — самые свежие ~2 часа",
+    "Обеденная молитва","Сегмент 2 — мелочёвка и доделки","Вечерняя молитва","Вечер — закрытие дня"
+  ];
+
+  var counter = 0;
+  function uid(){ return Date.now().toString(36) + "-" + (counter++).toString(36); }
+  function makeBlock(title, items){
+    return { id: uid(), title: title, items: (items||[]).map(function(t){ return { id: uid(), text: t, done: false }; }) };
+  }
+  function makeDefaults(){ return DEFAULT_KEYS.map(function(k){ return makeBlock(k, PRESETS[k]); }); }
+
+  // icons (feather-style)
+  function svg(s, inner, sw){
+    return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="'+(sw||2)+'" stroke-linecap="round" stroke-linejoin="round">'+inner+'</svg>';
+  }
+  var IC = {
+    check: function(s){ return svg(s,'<polyline points="20 6 9 17 4 12"/>',3); },
+    plus:  function(s){ return svg(s,'<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>'); },
+    trash: function(s){ return svg(s,'<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>'); },
+    up:    function(s){ return svg(s,'<polyline points="18 15 12 9 6 15"/>'); },
+    down:  function(s){ return svg(s,'<polyline points="6 9 12 15 18 9"/>'); },
+    x:     function(s){ return svg(s,'<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>'); },
+    rotate:function(s){ return svg(s,'<polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>'); }
+  };
+
+  // tiny DOM helper
+  function el(tag, props, children){
+    var n = document.createElement(tag);
+    if(props){
+      for(var k in props){
+        var v = props[k];
+        if(v == null) continue;
+        if(k === "class") n.className = v;
+        else if(k === "html") n.innerHTML = v;
+        else if(k === "value") n.value = v;
+        else if(k.slice(0,2) === "on" && typeof v === "function") n.addEventListener(k.slice(2), v);
+        else n.setAttribute(k, v);
+      }
+    }
+    if(children){
+      if(!Array.isArray(children)) children = [children];
+      for(var i=0;i<children.length;i++){
+        var c = children[i];
+        if(c == null) continue;
+        n.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+      }
+    }
+    return n;
+  }
+
+  // state
+  var state = { title: "Мой день", blocks: makeDefaults() };
+  var pendingFocus = null;
+
+  function load(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){
+        var p = JSON.parse(raw);
+        if(p && Array.isArray(p.blocks)) state.blocks = p.blocks;
+        if(p && typeof p.title === "string") state.title = p.title;
+      }
+    }catch(e){ /* localStorage unavailable — in-memory only */ }
+  }
+  function save(){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify({ title: state.title, blocks: state.blocks })); }
+    catch(e){ /* ignore */ }
+  }
+
+  function counts(){
+    var total = 0, done = 0;
+    state.blocks.forEach(function(b){
+      b.items.forEach(function(i){
+        if(i.text.trim()){ total++; if(i.done) done++; }
+      });
+    });
+    return { total: total, done: done };
+  }
+  function updateProgress(){
+    var c = counts();
+    var pct = c.total ? Math.round((c.done / c.total) * 100) : 0;
+    document.getElementById("pfill").style.width = pct + "%";
+    document.getElementById("pcount").textContent = c.done + " / " + c.total;
+  }
+
+  var blocksEl = document.getElementById("blocks");
+
+  function render(){
+    blocksEl.innerHTML = "";
+    state.blocks.forEach(function(b, bi){
+      var last = state.blocks.length - 1;
+      var btotal = 0, bdone = 0;
+      b.items.forEach(function(i){ if(i.text.trim()){ btotal++; if(i.done) bdone++; } });
+      var allDone = btotal > 0 && bdone === btotal;
+
+      var num = el("span", { "class":"block-num", style: allDone ? "opacity:.5" : "" }, ("0"+(bi+1)).slice(-2));
+      var titleInput = el("input", { "class":"inp block-title-input", value: b.title, oninput: function(e){ b.title = e.target.value; save(); } });
+
+      var up = el("button", { "class":"iconbtn", title:"Выше", html: IC.up(17), style: bi===0 ? "opacity:.3" : "", onclick: function(){ moveBlock(bi,-1); } });
+      if(bi===0) up.disabled = true;
+      var down = el("button", { "class":"iconbtn", title:"Ниже", html: IC.down(17), style: bi===last ? "opacity:.3" : "", onclick: function(){ moveBlock(bi,1); } });
+      if(bi===last) down.disabled = true;
+      var del = el("button", { "class":"iconbtn", title:"Удалить блок", html: IC.trash(16), onclick: function(){ askDeleteBlock(b); } });
+      var tools = el("div", { "class":"block-tools" }, [up, down, del]);
+      var head = el("div", { "class":"block-head" }, [num, titleInput, tools]);
+
+      var items = el("div", { "class":"items" });
+      b.items.forEach(function(it){
+        var cb = el("button", { "class":"checkbox" + (it.done ? " done" : ""), html: it.done ? IC.check(14) : "",
+          onclick: function(){ it.done = !it.done; save(); render(); } });
+        var inp = el("input", { "class":"inp item-input" + (it.done ? " done" : ""), value: it.text, placeholder:"Новое дело…",
+          "data-fid": it.id, oninput: function(e){ it.text = e.target.value; save(); updateProgress(); } });
+        var x = el("button", { "class":"x-btn", title:"Удалить", html: IC.x(15),
+          onclick: function(){ b.items = b.items.filter(function(z){ return z.id !== it.id; }); save(); render(); } });
+        items.appendChild(el("div", { "class":"item" }, [cb, inp, x]));
+      });
+      var addI = el("button", { "class":"add-item", html: IC.plus(15) + "<span>дело</span>",
+        onclick: function(){ var id = uid(); b.items.push({ id:id, text:"", done:false }); pendingFocus = id; save(); render(); } });
+      items.appendChild(addI);
+
+      var section = el("section", { "class":"block", style:"animation-delay:" + Math.min(bi*60,360) + "ms" }, [head, items]);
+      blocksEl.appendChild(section);
+    });
+
+    updateProgress();
+
+    if(pendingFocus){
+      var node = blocksEl.querySelector('[data-fid="' + pendingFocus + '"]');
+      pendingFocus = null;
+      if(node) node.focus();
+    }
+  }
+
+  function moveBlock(idx, dir){
+    var j = idx + dir;
+    if(j < 0 || j >= state.blocks.length) return;
+    var t = state.blocks[idx]; state.blocks[idx] = state.blocks[j]; state.blocks[j] = t;
+    save(); render();
+  }
+  function addBlock(key){
+    var title = key === "Пустой блок" ? "Новый блок" : key;
+    var items = key === "Пустой блок" ? [""] : (PRESETS[key] || []);
+    state.blocks.push(makeBlock(title, items));
+    save(); render();
+    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+  }
+  function resetDay(){
+    state.blocks.forEach(function(b){ b.items.forEach(function(i){ i.done = false; }); });
+    save(); render();
+  }
+  function resetTemplate(){
+    state.title = "Мой день"; state.blocks = makeDefaults();
+    document.getElementById("title").value = state.title;
+    save(); render();
+  }
+
+  // confirm dialog
+  var overlay = document.getElementById("overlay");
+  var pendingAction = null;
+  function askDeleteBlock(b){
+    showConfirm("Удалить блок «" + b.title + "»?", "Удалить", function(){
+      state.blocks = state.blocks.filter(function(x){ return x.id !== b.id; });
+      save(); render();
+    });
+  }
+  function showConfirm(msg, label, action){
+    document.getElementById("dlg-msg").textContent = msg;
+    document.getElementById("dlg-ok").textContent = label;
+    pendingAction = action;
+    overlay.classList.add("show");
+  }
+  function hideConfirm(){ overlay.classList.remove("show"); pendingAction = null; }
+  document.getElementById("dlg-cancel").addEventListener("click", hideConfirm);
+  overlay.addEventListener("click", function(e){ if(e.target === overlay) hideConfirm(); });
+  document.getElementById("dlg-ok").addEventListener("click", function(){
+    var a = pendingAction; hideConfirm(); if(a) a();
+  });
+
+  // static wiring
+  function init(){
+    load();
+
+    // date
+    try{
+      var d = new Date().toLocaleDateString("ru-RU", { weekday:"long", day:"numeric", month:"long" });
+      document.getElementById("date").textContent = d.charAt(0).toUpperCase() + d.slice(1);
+    }catch(e){ document.getElementById("date").textContent = ""; }
+
+    // title
+    var titleEl = document.getElementById("title");
+    titleEl.value = state.title;
+    titleEl.addEventListener("input", function(e){ state.title = e.target.value; save(); });
+
+    // preset select
+    var sel = document.getElementById("preset");
+    Object.keys(PRESETS).forEach(function(k){
+      var o = document.createElement("option"); o.value = k; o.textContent = k; sel.appendChild(o);
+    });
+    var oEmpty = document.createElement("option"); oEmpty.value = "Пустой блок"; oEmpty.textContent = "Пустой блок"; sel.appendChild(oEmpty);
+    document.getElementById("caret").innerHTML = IC.down(16);
+
+    // buttons
+    document.getElementById("addblock").innerHTML = IC.plus(17) + "<span>Добавить блок</span>";
+    document.getElementById("addblock").addEventListener("click", function(){ addBlock(sel.value); });
+
+    document.getElementById("newday").innerHTML = IC.rotate(15) + "<span>Новый день</span>";
+    document.getElementById("newday").addEventListener("click", function(){
+      showConfirm("Снять все отметки и начать новый день? Сами дела и блоки останутся.", "Новый день", resetDay);
+    });
+    document.getElementById("resetall").addEventListener("click", function(){
+      showConfirm("Вернуть всё к исходному шаблону? Ваши изменения и отметки будут потеряны.", "Сбросить", resetTemplate);
+    });
+
+    render();
+  }
+
+  if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+</script>
 </body>
 </html>
