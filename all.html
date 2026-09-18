@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Общая карта — итого всё</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#e8dfcd; --card:#f7f1e5; --ink:#2b2520; --muted:#7c7264;
+    --accent:#3f6048; --accent-soft:#e3ead9; --warn:#bb6240;
+    --gold:#bd8a36; --gold-soft:rgba(189,138,54,.15); --line:rgba(43,37,32,.13);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:'Manrope',system-ui,sans-serif;color:var(--ink);
+    background:radial-gradient(120% 80% at 50% -10%, #f1e9d8 0%, var(--bg) 55%, #ddd2bd 100%);
+    background-attachment:fixed;min-height:100vh;line-height:1.5;
+    -webkit-font-smoothing:antialiased;padding:22px 16px 40px;
+  }
+  .wrap{max-width:600px;margin:0 auto}
+
+  header{margin:6px 2px 18px}
+  .kicker{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  h1{font-family:'Spectral',serif;font-weight:700;font-size:clamp(27px,7.6vw,37px);margin:.18em 0 .25em;line-height:1.04;letter-spacing:-.01em}
+  .sub{font-size:13.5px;color:var(--muted);margin:0 0 16px}
+  .progresswrap{display:flex;align-items:center;gap:12px}
+  .chip{font-size:13px;font-weight:600;color:var(--accent);white-space:nowrap}
+  .bar{flex:1;height:6px;border-radius:99px;background:rgba(43,37,32,.1);overflow:hidden}
+  .bar span{display:block;height:100%;width:0;background:var(--accent);border-radius:99px;transition:width .4s ease}
+
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 18px 12px;margin-bottom:14px;
+    box-shadow:0 1px 0 rgba(255,255,255,.6) inset, 0 10px 28px -22px rgba(43,37,32,.55);
+  }
+  h2{font-family:'Spectral',serif;font-weight:600;font-size:18px;margin:0 0 6px;letter-spacing:-.005em}
+
+  /* focus */
+  .focus{border-left:3px solid var(--accent)}
+  .frow{display:flex;gap:12px;padding:10px 0;border-top:1px solid var(--line);align-items:baseline}
+  .frow.first{border-top:none;padding-top:4px}
+  .fl{flex:none;width:98px;font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+  .fl.core{color:var(--accent)}
+  .fl.app{color:var(--gold)}
+  .ft{flex:1;min-width:0;font-size:14px;line-height:1.45}
+  .ft b{font-family:'Spectral',serif;font-weight:600}
+  .fhint{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+
+  /* layer dividers */
+  .layerhead{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:20px 4px 10px}
+  .layerhead b{color:var(--accent);font-weight:700}
+  .layerhead.gold b{color:var(--gold)}
+
+  /* stages inside a layer card */
+  .stage{padding:13px 0;border-top:1px solid var(--line)}
+  .stage:first-of-type{padding-top:2px;border-top:none}
+  .stagehead{display:flex;align-items:center;gap:10px;margin-bottom:7px}
+  .idx{
+    width:24px;height:24px;flex:none;border-radius:7px;background:var(--accent-soft);color:var(--accent);
+    font-family:'Spectral',serif;font-weight:700;font-size:13.5px;display:grid;place-items:center;
+  }
+  .idx.par{background:var(--gold-soft);color:var(--gold)}
+  .stagename{font-weight:600;font-size:15px}
+  .rolenote{font-size:12px;color:var(--muted);font-style:italic;margin:-3px 0 7px 34px;line-height:1.4}
+  .scount{margin-left:auto;font-size:12.5px;font-weight:600;color:var(--accent);white-space:nowrap}
+  .tag{font-size:10px;font-weight:600;letter-spacing:.04em;color:var(--gold);background:var(--gold-soft);padding:2px 7px;border-radius:99px;margin-left:auto}
+
+  .check{display:flex;align-items:flex-start;gap:11px;padding:6px 0 6px 34px;cursor:pointer;font-size:14px}
+  .check input{position:absolute;opacity:0;width:0;height:0}
+  .box{
+    width:20px;height:20px;flex:none;margin-top:1px;border:1.6px solid rgba(43,37,32,.3);border-radius:6px;background:#fffdf8;
+    transition:background .15s,border-color .15s;position:relative;
+  }
+  .check input:checked + .box{background:var(--accent);border-color:var(--accent)}
+  .check input:checked + .box::after{
+    content:"";position:absolute;left:6px;top:2px;width:5px;height:10px;
+    border:solid #f7f1e5;border-width:0 2px 2px 0;transform:rotate(43deg);
+  }
+  .check input:focus-visible + .box{box-shadow:0 0 0 3px var(--accent-soft)}
+  .ltext{transition:color .15s}
+  .check input:checked ~ .ltext{color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(124,114,100,.5)}
+
+  .pardiv{
+    margin:2px 0 -2px;padding-top:14px;border-top:1px dashed var(--line);
+    font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);
+  }
+
+  /* counter */
+  .counter{display:flex;align-items:center;gap:10px;margin:4px 0 4px 34px;padding:9px 12px;background:#fffdf8;border:1px solid var(--line);border-radius:11px}
+  .clabel{flex:1;min-width:0;font-size:12.5px;color:var(--muted);line-height:1.35}
+  .cbtn{
+    width:34px;height:34px;flex:none;border-radius:9px;border:1px solid var(--line);background:var(--card);
+    font-family:'Manrope';font-size:19px;font-weight:700;color:var(--accent);cursor:pointer;line-height:1;
+    transition:background .15s,border-color .15s;
+  }
+  .cbtn:active{background:var(--accent-soft)}
+  .cnum{font-family:'Spectral',serif;font-weight:700;font-size:23px;min-width:2ch;text-align:center;color:var(--ink)}
+
+  footer{margin-top:22px;text-align:center}
+  .footrow{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  .ghost,.reset{
+    background:transparent;border:1px solid var(--line);color:var(--muted);
+    font-size:13px;font-weight:600;padding:9px 16px;border-radius:10px;cursor:pointer;transition:color .2s,border-color .2s;
+  }
+  .ghost:hover{color:var(--accent);border-color:rgba(63,96,72,.4)}
+  .reset:hover{color:var(--warn);border-color:rgba(187,98,64,.4)}
+  .reset.armed{color:#f7f1e5;background:var(--warn);border-color:var(--warn)}
+  .note{font-size:11.5px;color:var(--muted);margin:14px auto 0;opacity:.85;max-width:400px;line-height:1.45}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">Личная методология · оба слоя</div>
+    <h1>Общая карта</h1>
+    <p class="sub">Всё в одном месте, по приоритету. Блок «Сейчас в фокусе» сам показывает следующий незакрытый шаг каждого слоя.</p>
+    <div class="progresswrap">
+      <div class="chip" id="chip">Освоено 0/25</div>
+      <div class="bar"><span id="bar"></span></div>
+    </div>
+  </header>
+
+  <section class="card focus">
+    <h2>Сейчас в фокусе</h2>
+    <div class="frow first"><span class="fl core">Основы</span><div class="ft" id="fCore">—</div></div>
+    <div class="frow"><span class="fl app">Прикладное</span><div class="ft" id="fApp">—</div></div>
+  </section>
+
+  <div class="layerhead"><b>Слой 1</b> · Основы — по очереди, порядок по зависимости</div>
+
+  <section class="card">
+
+    <div class="stage">
+      <div class="stagehead"><span class="idx">0</span><span class="stagename">Желания · компас</span><span class="scount" data-count="s0">0/1</span></div>
+      <label class="check"><input type="checkbox" data-check="s0_1" data-track="s0" data-layer="core" data-stage="Этап 0 · Компас"><span class="box"></span><span class="ltext">Сформулировал «зачем» одной фразой</span></label>
+    </div>
+
+    <div class="stage">
+      <div class="stagehead"><span class="idx">1</span><span class="stagename">Концентрация внимания</span><span class="scount" data-count="s1">0/2</span></div>
+      <label class="check"><input type="checkbox" data-check="s1_1" data-track="s1" data-layer="core" data-stage="Этап 1 · Концентрация"><span class="box"></span><span class="ltext">Отвлечений ≤ порога несколько дней подряд</span></label>
+      <label class="check"><input type="checkbox" data-check="s1_2" data-track="s1" data-layer="core" data-stage="Этап 1 · Концентрация"><span class="box"></span><span class="ltext">Ловлю уплывание и возвращаюсь без злости</span></label>
+    </div>
+
+    <div class="stage">
+      <div class="stagehead"><span class="idx">2</span><span class="stagename">Понимание и вопросы</span><span class="scount" data-count="s2">0/3</span></div>
+      <label class="check"><input type="checkbox" data-check="s2_1" data-track="s2" data-layer="core" data-stage="Этап 2 · Понимание"><span class="box"></span><span class="ltext">Сам задаю вопросы глубже «что»</span></label>
+      <label class="check"><input type="checkbox" data-check="s2_2" data-track="s2" data-layer="core" data-stage="Этап 2 · Понимание"><span class="box"></span><span class="ltext">Объясняю новое своими словами без копирования</span></label>
+      <label class="check"><input type="checkbox" data-check="s2_3" data-track="s2" data-layer="core" data-stage="Этап 2 · Понимание"><span class="box"></span><span class="ltext">Замечаю, когда только кажется, что понял</span></label>
+    </div>
+
+    <div class="stage">
+      <div class="stagehead"><span class="idx">3</span><span class="stagename">Эмоции</span><span class="scount" data-count="s3">0/2</span></div>
+      <label class="check"><input type="checkbox" data-check="s3_1" data-track="s3" data-layer="core" data-stage="Этап 3 · Эмоции"><span class="box"></span><span class="ltext">Ловлю эмоцию рано, называю её и триггер</span></label>
+      <label class="check"><input type="checkbox" data-check="s3_2" data-track="s3" data-layer="core" data-stage="Этап 3 · Эмоции"><span class="box"></span><span class="ltext">Могу сместить состояние с какой-то надёжностью</span></label>
+    </div>
+
+    <div class="stage">
+      <div class="stagehead"><span class="idx">4</span><span class="stagename">Желания · глубоко</span><span class="scount" data-count="s4">0/3</span></div>
+      <label class="check"><input type="checkbox" data-check="s4_1" data-track="s4" data-layer="core" data-stage="Этап 4 · Желания"><span class="box"></span><span class="ltext">Отделяю своё желание от заимствованного</span></label>
+      <label class="check"><input type="checkbox" data-check="s4_2" data-track="s4" data-layer="core" data-stage="Этап 4 · Желания"><span class="box"></span><span class="ltext">Формулирую настоящее желание и его причину</span></label>
+      <label class="check"><input type="checkbox" data-check="s4_3" data-track="s4" data-layer="core" data-stage="Этап 4 · Желания"><span class="box"></span><span class="ltext">Выдерживаю желание под наблюдением</span></label>
+    </div>
+
+    <div class="pardiv">Параллельно — с самого начала</div>
+
+    <div class="stage">
+      <div class="stagehead"><span class="idx par">∥</span><span class="stagename">Запоминание</span><span class="scount" data-count="mem">0/2</span></div>
+      <label class="check"><input type="checkbox" data-check="mem_1" data-track="mem"><span class="box"></span><span class="ltext">Список держится на следующий день</span></label>
+      <label class="check"><input type="checkbox" data-check="mem_2" data-track="mem"><span class="box"></span><span class="ltext">Применяю технику на своём материале</span></label>
+    </div>
+
+    <div class="stage">
+      <div class="stagehead"><span class="idx par">∥</span><span class="stagename">Вера и молитва</span><span class="tag">практика, вне счёта</span></div>
+      <label class="check"><input type="checkbox" data-check="pray_1" data-practice="1"><span class="box"></span><span class="ltext">Утром и вечером — регулярно</span></label>
+      <label class="check"><input type="checkbox" data-check="pray_2" data-practice="1"><span class="box"></span><span class="ltext">Пройден сегмент про духовную сухость</span></label>
+    </div>
+
+  </section>
+
+  <div class="layerhead gold"><b>Слой 2</b> · Прикладное — по близости к результату, идёт рядом</div>
+
+  <section class="card">
+
+    <div class="stage">
+      <div class="stagehead"><span class="idx">1</span><span class="stagename">Брокеридж · доход</span><span class="scount" data-count="brk">0/4</span></div>
+      <div class="rolenote">Приоритет 1 — ближайший путь к деньгам.</div>
+      <label class="check"><input type="checkbox" data-check="brk1" data-track="brk" data-layer="app" data-stage="Брокеридж"><span class="box"></span><span class="ltext">Определил, что и для кого брокеришь — конкретная ниша</span></label>
+      <label class="check"><input type="checkbox" data-check="brk2" data-track="brk" data-layer="app" data-stage="Брокеридж"><span class="box"></span><span class="ltext">Отправил первый контакт — одно сообщение</span></label>
+      <div class="counter">
+        <span class="clabel">Отправлено сообщений — до первой сделки прогресс меряется этим</span>
+        <button class="cbtn" id="brkMinus" type="button" aria-label="минус">−</button>
+        <span class="cnum" id="brkCount">0</span>
+        <button class="cbtn" id="brkPlus" type="button" aria-label="плюс">+</button>
+      </div>
+      <label class="check"><input type="checkbox" data-check="brk3" data-track="brk" data-layer="app" data-stage="Брокеридж" data-hint="галочка здесь не полностью в твоих руках — до неё считай отправленные сообщения счётчиком выше"><span class="box"></span><span class="ltext">Первая комиссия или сделка</span></label>
+      <label class="check"><input type="checkbox" data-check="brk4" data-track="brk" data-layer="app" data-stage="Брокеридж"><span class="box"></span><span class="ltext">Повторяемый поток, а не разовая удача</span></label>
+    </div>
+
+    <div class="stage">
+      <div class="stagehead"><span class="idx">2</span><span class="stagename">LLM · AI</span><span class="scount" data-count="llm">0/4</span></div>
+      <div class="rolenote">Большой двигатель — мощнее, но окупается дольше.</div>
+      <label class="check"><input type="checkbox" data-check="llm1" data-track="llm" data-layer="app" data-stage="LLM"><span class="box"></span><span class="ltext">Эффективный промптинг — стабильно получаю нужный результат</span></label>
+      <label class="check"><input type="checkbox" data-check="llm2" data-track="llm" data-layer="app" data-stage="LLM"><span class="box"></span><span class="ltext">Первый продукт на API — маленький, но рабочий</span></label>
+      <label class="check"><input type="checkbox" data-check="llm3" data-track="llm" data-layer="app" data-stage="LLM"><span class="box"></span><span class="ltext">Архитектурное понимание — поведение модели и её границы</span></label>
+      <label class="check"><input type="checkbox" data-check="llm4" data-track="llm" data-layer="app" data-stage="LLM"><span class="box"></span><span class="ltext">Продукт серьёзнее — уже на основе понимания</span></label>
+    </div>
+
+  </section>
+
+  <footer>
+    <div class="footrow">
+      <button id="exportBtn" class="ghost" type="button">Скачать копию</button>
+      <button id="importBtn" class="ghost" type="button">Загрузить копию</button>
+      <button id="reset" class="reset" type="button">Сбросить</button>
+    </div>
+    <input id="importFile" type="file" accept="application/json,.json" hidden>
+    <p class="note">Своя память — с другими картами не пересекается. «Освоено» считается без молитвы (она — практика). Прогресс хранится в браузере; «Скачать копию» — резервный файл.</p>
+  </footer>
+
+</div>
+
+<script>
+  const KEY = 'roadmap_all_v1';
+  let state = { checks:{}, counters:{ brk:0 } };
+
+  // Хранение в три слоя: хранилище приложения Claude → localStorage браузера → память.
+  const Store = {
+    async get(){
+      if(window.storage && window.storage.get){
+        try{
+          const r = await Promise.race([
+            window.storage.get(KEY),
+            new Promise(res => setTimeout(() => res(null), 1500))
+          ]);
+          if(r && r.value) return r.value;
+        }catch(e){}
+      }
+      try{ const v = localStorage.getItem(KEY); if(v) return v; }catch(e){}
+      return null;
+    },
+    async set(val){
+      if(window.storage && window.storage.set){ try{ await window.storage.set(KEY, val); }catch(e){} }
+      try{ localStorage.setItem(KEY, val); }catch(e){}
+    },
+    async del(){
+      if(window.storage && window.storage.delete){ try{ await window.storage.delete(KEY); }catch(e){} }
+      try{ localStorage.removeItem(KEY); }catch(e){}
+    }
+  };
+
+  function applyParsed(p){
+    state = {
+      checks: (p && p.checks) || {},
+      counters: { brk: (p && p.counters && p.counters.brk) || 0 }
+    };
+  }
+  async function loadState(){
+    const raw = await Store.get();
+    if(raw){ try{ applyParsed(JSON.parse(raw)); }catch(e){} }
+  }
+  async function saveState(){ await Store.set(JSON.stringify(state)); }
+
+  function hydrateChecks(){
+    document.querySelectorAll('input[data-check]').forEach(inp => {
+      inp.checked = !!state.checks[inp.dataset.check];
+    });
+  }
+
+  function updateProgress(){
+    const all = [...document.querySelectorAll('input[data-check]:not([data-practice])')];
+    const done = all.filter(c => c.checked).length;
+    document.getElementById('chip').textContent = 'Освоено '+done+'/'+all.length;
+    document.getElementById('bar').style.width = (all.length ? done/all.length*100 : 0)+'%';
+    document.querySelectorAll('.scount').forEach(span => {
+      const items = [...document.querySelectorAll('input[data-track="'+span.dataset.count+'"]')];
+      const d = items.filter(c => c.checked).length;
+      span.textContent = d+'/'+items.length;
+    });
+  }
+
+  function updateFocus(){
+    const pick = (layer, elId) => {
+      const items = [...document.querySelectorAll('input[data-layer="'+layer+'"]')];
+      const f = items.find(i => !i.checked);
+      const el = document.getElementById(elId);
+      if(!f){ el.innerHTML = 'Слой закрыт — все шаги освоены.'; return; }
+      const t = f.closest('.check').querySelector('.ltext').textContent;
+      const hint = f.dataset.hint ? '<span class="fhint">'+f.dataset.hint+'</span>' : '';
+      el.innerHTML = '<b>'+f.dataset.stage+'</b> · '+t+hint;
+    };
+    pick('core','fCore');
+    pick('app','fApp');
+  }
+
+  function renderCounter(){
+    document.getElementById('brkCount').textContent = state.counters.brk || 0;
+  }
+
+  function renderAll(){ hydrateChecks(); updateProgress(); updateFocus(); renderCounter(); }
+
+  document.querySelectorAll('input[data-check]').forEach(inp => {
+    inp.addEventListener('change', () => {
+      state.checks[inp.dataset.check] = inp.checked;
+      saveState();
+      updateProgress();
+      updateFocus();
+    });
+  });
+
+  document.getElementById('brkPlus').addEventListener('click', () => {
+    state.counters.brk = (state.counters.brk || 0) + 1;
+    saveState(); renderCounter();
+  });
+  document.getElementById('brkMinus').addEventListener('click', () => {
+    state.counters.brk = Math.max(0, (state.counters.brk || 0) - 1);
+    saveState(); renderCounter();
+  });
+
+  // Подтверждение прямо в кнопке: системное окно confirm() блокируется в некоторых
+  // окружениях (просмотр внутри приложения), и сброс молча не срабатывал.
+  const resetBtn = document.getElementById('reset');
+  let resetArmed = false, resetTimer = null;
+  function disarmReset(){
+    resetArmed = false;
+    clearTimeout(resetTimer);
+    resetBtn.textContent = 'Сбросить';
+    resetBtn.classList.remove('armed');
+  }
+  resetBtn.addEventListener('click', async () => {
+    if(!resetArmed){
+      resetArmed = true;
+      resetBtn.textContent = 'Точно сбросить?';
+      resetBtn.classList.add('armed');
+      clearTimeout(resetTimer);
+      resetTimer = setTimeout(disarmReset, 4000);
+      return;
+    }
+    disarmReset();
+    state = { checks:{}, counters:{ brk:0 } };
+    await Store.del();
+    renderAll();
+    resetBtn.textContent = 'Сброшено';
+    setTimeout(() => { resetBtn.textContent = 'Сбросить'; }, 1600);
+  });
+  document.getElementById('exportBtn').addEventListener('click', () => {
+    try{
+      const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'all-backup.json';
+      document.body.appendChild(a); a.click();
+      setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 120);
+    }catch(e){ alert('Не удалось сохранить копию на этом устройстве.'); }
+  });
+  document.getElementById('importBtn').addEventListener('click', () => {
+    document.getElementById('importFile').click();
+  });
+  document.getElementById('importFile').addEventListener('change', (e) => {
+    const file = e.target.files && e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try{
+        applyParsed(JSON.parse(reader.result));
+        saveState();
+        renderAll();
+        alert('Данные загружены.');
+      }catch(err){ alert('Не удалось прочитать файл копии.'); }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  });
+
+  (async () => {
+    renderAll();                      // показать сразу, не дожидаясь хранилища
+    try{ await loadState(); }catch(e){}
+    renderAll();                      // обновить, когда данные подгрузились
+  })();
+</script>
+</body>
+</html>
