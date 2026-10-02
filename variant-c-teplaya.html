@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Валерия Князева · блог, бранчи, туры и работа с брендами</title>
+<meta name="description" content="Валерия Князева, @mrsvaleriyav: бьюти-рутина, стиль и путешествия. Женские бранчи, wellness-туры к морю и работа с брендами.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;1,7..72,400;1,7..72,500&family=Onest:wght@400;500;600&display=swap" rel="stylesheet">
+<!--
+  МАКЕТ C «ТЁПЛАЯ». Тёплый край оси из вопроса 3.8 брифа.
+  Насыщенная пудра, терракотовые полосы, мягкие скругления, текст крупнее и ближе.
+  Первый экран: фото на весь экран с её портретом-карточкой поверх. На телефоне вместо
+  общего кадра встаёт сам портрет, чтобы «портрет крупно» (2.6) работал и там.
+  Тексты взяты с живого сайта без правок, кроме двух: убран город у бранчей (ответ 1.11)
+  и убраны цифры из блока «Брендам» (решение владельца 01.10.2026).
+  Фото с пометкой data-need стоят временно. ?clean в адресе прячет пометки.
+-->
+<style>
+:root{
+  --bg:#F6E7DF; --paper:#FFF8F4; --blush:#EFD3C6;
+  --ink:#3A261F; --muted:#6E5046; --line:#E6C9BB;
+  --terra:#B4593A; --terra-d:#93442A; --band:#9C4A2E;
+  --serif:"Literata", Georgia, serif;
+  --sans:"Onest", "Segoe UI", Arial, sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font:400 17px/1.7 var(--sans);-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit;text-decoration:none}
+ul{list-style:none}
+.wrap{max-width:1240px;margin:0 auto;padding:0 40px}
+
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--terra-d);outline-offset:3px}
+
+.eyebrow{font:600 12.5px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--terra-d)}
+h1,h2,h3{font-family:var(--serif);font-weight:400;font-style:italic;line-height:1.14;letter-spacing:-.01em}
+h2{font-size:clamp(32px,3.8vw,48px)}
+h3{font-size:25px}
+.lead{font-size:19px;color:var(--muted);max-width:54ch}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 28px;border-radius:12px;
+  font:600 15px/1 var(--sans);cursor:pointer;border:1.5px solid var(--terra);background:var(--terra);color:#fff}
+.btn:hover{background:var(--terra-d);border-color:var(--terra-d)}
+.btn-line{background:transparent;color:var(--terra-d);border-color:var(--terra-d)}
+.btn-line:hover{background:var(--terra-d);color:#fff}
+.more{display:inline-flex;align-items:center;gap:6px;font:600 15px/1 var(--sans);color:var(--terra-d);padding:12px 0 6px}
+.more:hover{color:var(--ink)}
+
+figure{position:relative}
+figcaption{font:italic 400 15px/1.45 var(--serif);color:var(--muted);margin-top:10px;padding:0 4px}
+
+.ph::after{content:"Заменить: " attr(data-need);position:absolute;left:12px;top:12px;max-width:calc(100% - 24px);z-index:2;
+  font:600 11px/1.3 var(--sans);color:var(--ink);background:rgba(255,248,244,.95);
+  border:1px dashed var(--terra-d);padding:5px 8px;border-radius:6px;pointer-events:none}
+.clean .ph::after{display:none}
+
+/* ---------- шапка ---------- */
+.top{position:sticky;top:0;z-index:30;background:var(--paper);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;height:76px;gap:24px}
+.brand{font:italic 500 25px/1 var(--serif);white-space:nowrap}
+.nav{display:flex;gap:26px}
+.nav a{font:500 15px/1 var(--sans);color:var(--muted);padding:12px 0}
+.nav a:hover{color:var(--terra-d)}
+.top .btn{min-height:44px;padding:0 20px;font-size:14.5px}
+
+/* ---------- первый экран ---------- */
+.hero{position:relative;height:clamp(600px,calc(100vh - 76px),920px);overflow:hidden;color:#fff}
+.hero-bg,.hero-bg img{position:absolute;inset:0;width:100%;height:100%}
+.hero-bg img{object-fit:cover;object-position:50% 42%}
+.hero-bg::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(52,28,20,.82) 0%,rgba(52,28,20,.58) 42%,rgba(52,28,20,.12) 72%,rgba(52,28,20,0) 100%),
+             linear-gradient(0deg,rgba(52,28,20,.45) 0%,rgba(52,28,20,0) 40%)}
+.hero .wrap{position:relative;height:100%;display:flex;align-items:center}
+.hero-text{max-width:600px}
+.hero .eyebrow{color:#FBE3D7}
+.hero h1{font-size:clamp(40px,4.6vw,66px);margin:22px 0 24px}
+.hero .lead{color:rgba(255,255,255,.92)}
+.hero .cta-row{margin-top:38px}
+.hero .btn{background:var(--paper);border-color:var(--paper);color:var(--terra-d)}
+.hero .btn:hover{background:#fff;border-color:#fff;color:var(--ink)}
+.hero .btn-line{background:transparent;border-color:rgba(255,255,255,.85);color:#fff}
+.hero .btn-line:hover{background:#fff;color:var(--ink)}
+.pcard-hero{position:absolute;right:clamp(40px,7vw,120px);bottom:clamp(48px,9vh,96px);width:290px;
+  background:var(--paper);padding:12px 12px 10px;border-radius:8px;transform:rotate(2.5deg);
+  box-shadow:0 20px 44px rgba(40,18,10,.32);color:var(--ink)}
+.pcard-hero img{width:100%;aspect-ratio:3/4;object-fit:cover;object-position:50% 20%;border-radius:4px}
+.pcard-hero figcaption{text-align:center;font-size:17px;color:var(--ink)}
+.cta-row{display:flex;gap:14px;flex-wrap:wrap}
+
+.strip{background:var(--blush)}
+.strip dl{display:grid;grid-template-columns:repeat(4,1fr)}
+.strip dl>div{padding:26px 24px;border-left:1px solid rgba(147,68,42,.22)}
+.strip dl>div:first-child{border-left:0;padding-left:0}
+.strip dt{font:600 12px/1 var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--terra-d)}
+.strip dd{font:italic 400 21px/1.3 var(--serif);margin-top:8px}
+
+/* ---------- секции ---------- */
+.sec{padding:clamp(76px,9vw,128px) 0}
+.bg-blush{background:var(--blush)}
+.bg-paper{background:var(--paper)}
+.band{background:var(--band);color:#fff}
+.band .eyebrow{color:#FBE3D7}
+.band .lead,.band p{color:rgba(255,255,255,.88)}
+.head{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:end;margin-bottom:52px}
+.head h2{margin-top:16px}
+
+/* проекты */
+.proj{display:grid;grid-template-columns:1.05fr 1fr;gap:24px}
+.card{background:var(--paper);border-radius:18px;padding:14px;border:1px solid var(--line)}
+.blog img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:12px}
+.blog .body{padding:22px 10px 12px}
+.blog h3{font-size:36px;margin:12px 0 12px}
+.blog p{color:var(--muted)}
+.handle{display:inline-block;font:italic 500 26px/1 var(--serif);margin-top:18px;color:var(--terra-d)}
+.minis{display:grid;grid-template-rows:repeat(4,1fr);gap:16px}
+.mini{display:grid;grid-template-columns:150px 1fr;gap:20px;align-items:stretch}
+.mini figure{height:100%}
+.mini img{width:100%;height:100%;min-height:150px;object-fit:cover;border-radius:10px}
+.mini .body{display:flex;flex-direction:column;padding:6px 6px 2px 0}
+.mini h3{font-size:23px;margin:8px 0 6px}
+.mini p{color:var(--muted);font-size:15px;line-height:1.55}
+.mini .more{margin-top:auto}
+
+/* о себе */
+.about{display:grid;grid-template-columns:5fr 7fr;gap:72px;align-items:center}
+.about figure{background:var(--paper);padding:14px 14px 10px;border-radius:8px;max-width:380px;justify-self:center;
+  transform:rotate(-2deg);box-shadow:0 18px 40px rgba(90,40,20,.16)}
+.about figure img{width:100%;aspect-ratio:315/400;object-fit:cover;border-radius:4px}
+.about figcaption{text-align:center;font-size:17px;color:var(--ink)}
+.about h2{margin:16px 0 24px}
+.about p{font-size:18px}
+.about p+p{margin-top:16px}
+.points{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:64px}
+.points li{background:var(--paper);border-radius:16px;padding:26px 24px}
+.points i{display:block;font:italic 500 32px/1 var(--serif);color:var(--terra)}
+.points b{display:block;font:italic 500 21px/1.25 var(--serif);margin:12px 0 8px}
+.points span{color:var(--muted);font-size:15px;line-height:1.6}
+
+/* тур */
+.tour{display:grid;grid-template-columns:1.1fr 1fr;gap:40px;align-items:start}
+.tour-photos{display:grid;grid-template-columns:1.2fr 1fr;gap:16px;align-items:end}
+.tour-photos img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:16px}
+.tour-photos figure:nth-child(2) img{aspect-ratio:3/4}
+.tbox{background:var(--blush);border-radius:20px;padding:34px}
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.chips>div{background:var(--paper);border-radius:12px;padding:16px 18px}
+.chips dt{font:600 11.5px/1 var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--terra-d)}
+.chips dd{font:italic 400 21px/1.3 var(--serif);margin-top:8px}
+.tbox .note{margin:24px 0 24px;color:var(--muted);font-size:16px}
+
+/* бранчи */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
+.split img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:20px}
+.split h2{margin:16px 0 20px}
+.split .note{margin-top:18px;color:var(--muted);font-size:16px}
+.split .cta-row{margin-top:32px}
+
+/* брендам */
+.formats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.formats>div{background:var(--paper);border-radius:18px;padding:30px 26px;border:1px solid var(--line)}
+.formats h3{font-size:28px;margin-bottom:10px}
+.formats p{color:var(--muted);font-size:15.5px}
+.mk{display:flex;align-items:center;justify-content:space-between;gap:32px;margin-top:20px;
+  background:var(--blush);border-radius:18px;padding:30px 34px}
+.mk p{font:italic 400 23px/1.4 var(--serif);max-width:34ch}
+
+/* написать */
+.write{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.write h2{margin:16px 0 20px;color:#fff}
+.form{display:grid;gap:18px;background:var(--paper);color:var(--ink);border-radius:20px;padding:34px}
+.form label{display:block;font:600 12px/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--terra-d);margin-bottom:10px}
+.form input,.form select{width:100%;height:54px;border:1.5px solid var(--line);border-radius:12px;background:#fff;
+  padding:0 16px;font:400 16px var(--sans);color:var(--ink);appearance:none}
+.form select{background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%2393442A' stroke-width='1.6'/%3E%3C/svg%3E") no-repeat right 18px center;cursor:pointer}
+.form .consent{font-size:13px;line-height:1.5;color:var(--muted)}
+.consent a{text-decoration:underline}
+.direct{margin-top:34px}
+.direct a{display:inline-block;margin-top:6px;font:italic 500 30px/1.2 var(--serif);color:#fff;border-bottom:1px solid rgba(255,255,255,.6)}
+.direct a:hover{border-bottom-color:#fff}
+
+/* подвал */
+.foot{background:var(--paper);padding:52px 0 44px;border-top:1px solid var(--line)}
+.foot .wrap{display:grid;grid-template-columns:1fr auto;gap:24px 40px;align-items:end}
+.foot .brand{display:block;font-size:30px;margin-bottom:10px}
+.foot small{display:block;font-size:14px;color:var(--muted);line-height:1.6}
+.foot nav{display:flex;flex-wrap:wrap;gap:4px 24px;justify-content:flex-end}
+.foot nav a{font:500 15px/1 var(--sans);color:var(--muted);padding:12px 0}
+.foot nav a:hover{color:var(--terra-d)}
+
+/* ---------- адаптив ---------- */
+@media (max-width:1100px){
+  .proj{grid-template-columns:1fr}
+  .blog{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center}
+  .points,.formats{grid-template-columns:1fr 1fr}
+  .pcard-hero{width:230px}
+  .nav{gap:18px}
+}
+@media (max-width:860px){
+  .wrap{padding:0 24px}
+  .top .wrap{height:auto;flex-wrap:wrap;padding-top:14px;gap:4px 16px}
+  .brand{flex:1}
+  .nav{order:3;width:100%;overflow-x:auto;gap:22px;scrollbar-width:none}
+  .nav::-webkit-scrollbar{display:none}
+  .nav a{white-space:nowrap;padding:14px 0}
+  .hero{height:auto;background:#4A2A20}
+  .hero-bg{position:relative;display:block;height:min(66vh,540px)}
+  .hero-bg img{object-position:50% 18%}
+  .hero-bg::after{background:linear-gradient(0deg,rgba(74,42,32,1) 0%,rgba(74,42,32,0) 22%)}
+  .hero .wrap{height:auto;padding-top:8px;padding-bottom:44px}
+  .pcard-hero{display:none}
+  .strip dl{grid-template-columns:1fr 1fr}
+  .strip dl>div:nth-child(3){border-left:0;padding-left:0}
+  .strip dl>div:nth-child(n+3){border-top:1px solid rgba(147,68,42,.22)}
+  .head,.about,.tour,.split,.write{grid-template-columns:1fr;gap:36px}
+  .blog{display:block}
+  .split figure{order:-1}
+  .foot .wrap{grid-template-columns:1fr}
+  .foot nav{justify-content:flex-start}
+}
+@media (max-width:560px){
+  .wrap{padding:0 20px}
+  .hero h1{font-size:34px;margin:16px 0 18px}
+  .brand{font-size:21px}
+  .top .btn{min-height:40px;padding:0 14px;font-size:13.5px}
+  .mini{grid-template-columns:104px 1fr;gap:14px}
+  .mini img{min-height:120px}
+  .points,.formats,.chips{grid-template-columns:1fr}
+  .strip dl>div{padding:20px 12px 20px 0}
+  .strip dd{font-size:18px}
+  .tbox,.form{padding:22px}
+  .mk{flex-direction:column;align-items:flex-start;padding:24px}
+  .btn{width:100%}
+  .top .btn{width:auto}
+  .cta-row{flex-direction:column}
+  .formats p,.points span,.mini p,.split .note,.tbox .note{font-size:16px}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#">Валерия Князева</a>
+    <nav class="nav" aria-label="Разделы">
+      <a href="#about">О себе</a>
+      <a href="#projects">Проекты</a>
+      <a href="#tour">Туры</a>
+      <a href="#brunch">Бранчи</a>
+      <a href="#brands">Брендам</a>
+    </nav>
+    <a class="btn" href="#write">Написать мне</a>
+  </div>
+</header>
+
+<main>
+
+<!-- Первый экран: фото на весь экран (3.11) и портрет (2.6). На телефоне портрет и есть фон. -->
+<section class="hero ph" data-need="кадр с бранча или из поездки, горизонтальный">
+  <picture class="hero-bg">
+    <source media="(max-width:860px)" srcset="assets/valeria-card.jpg">
+    <img src="assets/sunset-group.jpg" alt="Женщины на берегу на закате" width="1315" height="1753">
+  </picture>
+  <div class="wrap">
+    <div class="hero-text">
+      <div class="eyebrow">Валерия Князева · @mrsvaleriyav</div>
+      <h1>Одиннадцать лет показываю, как красота живёт в обычных днях</h1>
+      <p class="lead">Бьюти-рутина, которая работает, вещи, которые носятся годами, и поездки, из которых возвращаешься другой. Собираю женщин на бранчи и увожу в туры к морю.</p>
+      <div class="cta-row">
+        <a class="btn" href="#write">Написать мне</a>
+        <a class="btn btn-line" href="#projects">Чем я занимаюсь</a>
+      </div>
+    </div>
+  </div>
+  <figure class="pcard-hero ph" data-need="студийный портрет"><img src="assets/valeria-card.jpg" alt="Валерия Князева в белом костюме" width="720" height="959"><figcaption>Валерия Князева</figcaption></figure>
+</section>
+
+<div class="strip">
+  <div class="wrap">
+    <dl>
+      <div><dt>Основная площадка</dt><dd>@mrsvaleriyav</dd></div>
+      <div><dt>В блоге</dt><dd>с 2015 года</dd></div>
+      <div><dt>Темы</dt><dd>бьюти, стиль, путешествия</dd></div>
+      <div><dt>Проекты</dt><dd>бранчи, туры, бренды</dd></div>
+    </dl>
+  </div>
+</div>
+
+<!-- Проекты: блог большим блоком, остальное небольшими (ответ 2.4) -->
+<section class="sec" id="projects">
+  <div class="wrap">
+    <div class="head">
+      <div><div class="eyebrow">Проекты</div><h2>Чем я занимаюсь прямо сейчас</h2></div>
+      <p class="lead">Всё, что живо прямо сейчас. Остальное появится здесь, когда будет что показать.</p>
+    </div>
+    <div class="proj">
+      <article class="card blog">
+        <figure class="ph" data-need="кадр из блога"><img src="assets/sched-town.jpg" alt="Улица приморского городка с цветущей бугенвиллеей" width="1120" height="1400" loading="lazy"><figcaption>Путешествия, одна из главных тем блога</figcaption></figure>
+        <div class="body">
+          <span class="eyebrow">Блог</span>
+          <h3>Основная площадка</h3>
+          <p>Бьюти-рутина, аутфиты, путешествия и красивая повседневность. Место, где всё начинается: сюда приходишь за одной рекомендацией, а остаёшься надолго.</p>
+          <span class="handle">@mrsvaleriyav</span>
+        </div>
+      </article>
+      <div class="minis">
+        <article class="card mini">
+          <figure class="ph" data-need="эстетика"><img src="assets/champagne.jpg" alt="Два бокала у моря и веер на столе" width="960" height="1280" loading="lazy"></figure>
+          <div class="body"><span class="eyebrow">Канал</span><h3>Эстетика жизни</h3>
+            <p>Канал, куда попадает то, что не помещается в сторис: находки, мысли и анонсы бранчей.</p>
+            <a class="more" href="https://t.me/mrsvaleriyaclub" target="_blank" rel="noopener">Подписаться →</a></div>
+        </article>
+        <article class="card mini">
+          <figure><img src="assets/cta-yoga.jpg" alt="Йога на террасе виллы на закате" width="1200" height="1499" loading="lazy"></figure>
+          <div class="body"><span class="eyebrow">Туры</span><h3>OOM Yoga Tour</h3>
+            <p>Женские wellness-туры к морю: вилла, йога, море и небольшой круг из восьми женщин.</p>
+            <a class="more" href="#tour">Подробно о туре →</a></div>
+        </article>
+        <article class="card mini">
+          <figure class="ph" data-need="бранч"><img src="assets/rhythm-boat.jpg" alt="Подруги на палубе с журналом и коктейлями" width="640" height="800" loading="lazy"></figure>
+          <div class="body"><span class="eyebrow">Встречи</span><h3>Beauty Brunch</h3>
+            <p>Женские офлайн-бранчи: небольшой стол, разговоры про красоту и знакомства, которые продолжаются после.</p>
+            <a class="more" href="#brunch">Как попасть →</a></div>
+        </article>
+        <article class="card mini">
+          <figure class="ph" data-need="съёмка для бренда"><img src="assets/dinner.jpg" alt="Сервировка с суши и шампанским на яхте" width="960" height="1280" loading="lazy"></figure>
+          <div class="body"><span class="eyebrow">Сотрудничество</span><h3>Брендам</h3>
+            <p>Реклама, интеграции и съёмка для брендов. Форматы и условия работы, медиакит пришлю в переписке.</p>
+            <a class="more" href="#brands">Условия →</a></div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- О себе -->
+<section class="sec bg-blush" id="about">
+  <div class="wrap">
+    <div class="about">
+      <figure class="ph" data-need="портрет крупнее"><img src="assets/valeria-portrait.jpg" alt="Валерия Князева на яхте" width="315" height="400" loading="lazy"><figcaption>Это я</figcaption></figure>
+      <div>
+        <div class="eyebrow">О себе</div>
+        <h2>Всё началось с блога, остальное выросло вокруг него</h2>
+        <p>Блог я веду с 2015 года, и всё это время он про одно: уход за собой, вкус к вещам и внимание к деталям не требуют ни отпуска, ни особого повода.</p>
+        <p>За одиннадцать лет вокруг блога выросло остальное: бранчи в женском кругу, туры к морю и работа с брендами, которыми я правда пользуюсь.</p>
+      </div>
+    </div>
+    <ul class="points">
+      <li><i>01</i><b>Одиннадцать лет в блоге</b><span>Аудитория пришла давно и осталась. Поэтому рекомендацию здесь читают как совет подруги, а не как рекламу.</span></li>
+      <li><i>02</i><b>Свой стиль, а не тренды</b><span>Женственность без погони за модой и натуральная внешность вместо фильтров.</span></li>
+      <li><i>03</i><b>Своя картинка</b><span>Съёмка, свет и подача, из-за которых бренды приходят за визуалом, а не только за охватом.</span></li>
+      <li><i>04</i><b>Живые встречи</b><span>Бранчи и туры: аудитория из блога переходит в офлайн и возвращается обратно.</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- Тур: подробный блок с заявкой у Валерии (ответ 2.8) -->
+<section class="sec" id="tour">
+  <div class="wrap">
+    <div class="head">
+      <div><div class="eyebrow">OOM Yoga Tour</div><h2>Туры, где море возвращает тебя себе</h2></div>
+      <p class="lead">Шесть дней на вилле у воды в кругу из восьми женщин. Йога, море и время, которое наконец принадлежит тебе.</p>
+    </div>
+    <div class="tour">
+      <div class="tour-photos">
+        <figure><img src="assets/cove.jpg" alt="Лежаки в бухте под навесом" width="960" height="1280" loading="lazy"><figcaption>Каш, Турция. Самое нежное Средиземноморье.</figcaption></figure>
+        <figure><img src="assets/villa-grid.jpg" alt="Вилла с бассейном, спальня и терраса" width="1120" height="1400" loading="lazy"><figcaption>Вилла у воды: двухместные комнаты, общий стол, терраса.</figcaption></figure>
+      </div>
+      <div class="tbox">
+        <dl class="chips">
+          <div><dt>Формат</dt><dd>6 дней, вилла у моря</dd></div>
+          <div><dt>Круг</dt><dd>до 8 женщин</dd></div>
+          <div><dt>Наполнение</dt><dd>йога, море, медленные дни</dd></div>
+          <div><dt>Направление</dt><dd>Каш, Турция</dd></div>
+          <div><dt>Даты</dt><dd>уточняются</dd></div>
+          <div><dt>Стоимость</dt><dd>180 000 ₽ за место</dd></div>
+        </dl>
+        <p class="note">Заявку оставляешь здесь, я отвечаю лично и дальше рассказываю подробности в переписке.</p>
+        <a class="btn" href="#write" data-topic="Тур">Написать про тур</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Бранчи. Город убран по ответу 1.11 -->
+<section class="sec bg-paper" id="brunch">
+  <div class="wrap split">
+    <div>
+      <div class="eyebrow">Beauty Brunch</div>
+      <h2>Женский стол без повода</h2>
+      <p class="lead">Небольшие офлайн-встречи: разговоры про красоту и уход, знакомства, которые продолжаются после, и всё то, что обычно в сторис, но вживую.</p>
+      <p class="note">Бранчи собираются нерегулярно. Ближайший анонсирую в Telegram-канале, там же открывается запись.</p>
+      <div class="cta-row">
+        <a class="btn" href="#write" data-topic="Бранч">Написать про бранч</a>
+        <a class="btn btn-line" href="https://t.me/mrsvaleriyaclub" target="_blank" rel="noopener">Следить в канале</a>
+      </div>
+    </div>
+    <figure class="ph" data-need="фото с бранча"><img src="assets/sunset-group.jpg" alt="Женщины танцуют на берегу на закате" width="1315" height="1753" loading="lazy"><figcaption>Встречи, после которых остаются подруги</figcaption></figure>
+  </div>
+</section>
+
+<!-- Брендам: без цифр, медиакит в переписке (ответ 2.10, решение 01.10.2026) -->
+<section class="sec" id="brands">
+  <div class="wrap">
+    <div class="head">
+      <div><div class="eyebrow">Брендам</div><h2>Работаю с теми, чем пользуюсь сама</h2></div>
+      <p class="lead">Беру немного, поэтому интеграция читается как рекомендация, а не как реклама.</p>
+    </div>
+    <div class="formats">
+      <div><h3>Reels</h3><p>Сценарий, съёмка и монтаж на моей стороне.</p></div>
+      <div><h3>Сторис</h3><p>Серия с личным опытом, а не пересказ пресс-релиза.</p></div>
+      <div><h3>Интеграция</h3><p>Продукт внутри обычного дня, без рекламного тона.</p></div>
+      <div><h3>Съёмка</h3><p>Фотоконтент для бренда, который можно забрать себе.</p></div>
+    </div>
+    <div class="mk">
+      <p>Медиакит с полной статистикой и географией пришлю в ответ на сообщение.</p>
+      <a class="btn" href="#write" data-topic="Реклама и сотрудничество">Написать про сотрудничество</a>
+    </div>
+  </div>
+</section>
+
+<!-- Написать: главное действие (ответы 4.1, 4.3, 4.4) -->
+<section class="sec band" id="write">
+  <div class="wrap write">
+    <div>
+      <div class="eyebrow">Написать</div>
+      <h2>Напиши мне напрямую</h2>
+      <p class="lead">Оставь ник в Telegram и отметь, что интересует. Я отвечу лично, без менеджеров и автоответчиков.</p>
+      <p class="direct">Или сразу в Telegram:<br><a href="https://t.me/mrsvaleriyav" target="_blank" rel="noopener">@mrsvaleriyav</a></p>
+    </div>
+    <form class="form" action="#" method="post">
+      <div><label for="tg">Ник в Telegram</label><input id="tg" name="tg" type="text" placeholder="@nickname" autocomplete="off"></div>
+      <div><label for="topic">Что интересует</label>
+        <select id="topic" name="topic"><option>Тур</option><option>Бранч</option><option>Реклама и сотрудничество</option></select></div>
+      <button class="btn" type="submit">Отправить</button>
+      <p class="consent">Отправляя ник, соглашаешься с <a href="/page/privacy">политикой обработки персональных данных</a>.</p>
+    </form>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div>
+      <span class="brand">Валерия Князева</span>
+      <small>@mrsvaleriyav · блог, бранчи, wellness-туры и работа с брендами</small>
+      <small>© 2026 · <a href="/page/privacy">Политика конфиденциальности</a></small>
+    </div>
+    <nav aria-label="Разделы в подвале">
+      <a href="#about">О себе</a><a href="#projects">Проекты</a><a href="#tour">Туры</a>
+      <a href="#brunch">Бранчи</a><a href="#brands">Брендам</a><a href="#write">Написать</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+(function(){
+  if(/[?&]clean/.test(location.search)) document.documentElement.classList.add('clean');
+  var sel=document.getElementById('topic');
+  document.querySelectorAll('[data-topic]').forEach(function(a){
+    a.addEventListener('click',function(){ if(sel) sel.value=a.getAttribute('data-topic'); });
+  });
+  var f=document.querySelector('.form');
+  if(f) f.addEventListener('submit',function(e){ e.preventDefault(); });
+})();
+</script>
+</body>
+</html>
